@@ -1,7 +1,7 @@
 # Description:
 #   Build rules used by J2CL and BUILD targets used by the rules.
 
-load("@bazel_tools//tools/jdk:default_java_toolchain.bzl", "default_java_toolchain")
+load("@bazel_tools//tools/jdk:default_java_toolchain.bzl", "default_java_toolchain", "JDK8_JVM_OPTS", "JDK9_JVM_OPTS")
 
 licenses(["notice"])  # Apache 2.0
 
@@ -45,7 +45,18 @@ alias(
 
 default_java_toolchain(
     name = "j2cl_java_toolchain",
+    jvm_opts = select({
+        ":jdk8": JDK8_JVM_OPTS,
+        "//conditions:default": JDK9_JVM_OPTS,
+    }),
     bootclasspath = ["//jre/java:libjre_bootclasspath.jar"],
+)
+
+config_setting(
+    name = "jdk8",
+    values = {
+        "java_toolchain": "@bazel_tools//tools/jdk:toolchain_hostjdk8",
+    },
 )
 
 # ***************************************************
