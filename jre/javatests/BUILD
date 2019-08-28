@@ -3,7 +3,9 @@
 
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_binary")
 
-licenses(["notice"])  # Apache 2.0
+package(
+    licenses = ["notice"],  # Apache 2.0
+)
 
 load("//jre/java:j2cl_mirror_from_gwt.bzl", "j2cl_mirror_from_gwt", "java_source_copy")
 
@@ -190,7 +192,6 @@ j2cl_library(
     srcs = ["com/google/gwt/junit/client/GWTTestCase.java"],
     visibility = [
         "//javatests/com/google/protobuf/contrib/gwt:__subpackages__",
-        "//third_party/java_src/jsinterop_base/javatests:__subpackages__",
     ],
     deps = ["//third_party:junit-j2cl"],
 )

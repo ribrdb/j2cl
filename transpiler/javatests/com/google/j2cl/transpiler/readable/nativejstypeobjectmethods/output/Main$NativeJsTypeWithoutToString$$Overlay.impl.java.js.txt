@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.nativejstypeobjectmethods.Main$NativeJsTypeWithoutToString$$Overlay.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.nativejstypeobjectmethods.Main.NativeJsTypeWithoutToString.$Overlay$impl');
 
 
@@ -38,8 +30,7 @@ class $Overlay {
   static $loadModules() {}
 };
 
-$Util.$setClassMetadata(
-    $Overlay, $Util.$makeClassName('test.foo.NativeJsTypeWithoutToString'));
+$Util.$setClassMetadata($Overlay, 'test.foo.NativeJsTypeWithoutToString');
 
 
 exports = $Overlay;

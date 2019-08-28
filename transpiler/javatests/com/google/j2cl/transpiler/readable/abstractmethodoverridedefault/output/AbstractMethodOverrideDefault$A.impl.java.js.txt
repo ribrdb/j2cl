@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.abstractmethodoverridedefault.AbstractMethodOverrideDefault$A.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.abstractmethodoverridedefault.AbstractMethodOverrideDefault.A$impl');
 
 
@@ -43,12 +35,15 @@ class A extends j_l_Object {
   m_foo__() {}
 
   /**
-   * @abstract
+   * Default method forwarding stub.
    * @override
    * @return {void}
    * @public
    */
-  m_bar__() {}
+  m_bar__() {
+    I.m_bar__$default__com_google_j2cl_transpiler_readable_abstractmethodoverridedefault_AbstractMethodOverrideDefault_I(
+        this);
+  }
 
   /**
    * @return {void}
@@ -87,8 +82,7 @@ class A extends j_l_Object {
 
 $Util.$setClassMetadata(
     A,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.abstractmethodoverridedefault.AbstractMethodOverrideDefault$A'));
+    'com.google.j2cl.transpiler.readable.abstractmethodoverridedefault.AbstractMethodOverrideDefault$A');
 
 
 I.$markImplementor(A);

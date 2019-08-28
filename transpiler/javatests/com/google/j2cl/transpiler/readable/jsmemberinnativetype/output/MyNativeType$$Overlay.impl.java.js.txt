@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.jsmemberinnativetype.MyNativeType$$Overlay.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.jsmemberinnativetype.MyNativeType.$Overlay$impl');
 
 
@@ -15,7 +7,7 @@ const MyNativeType = goog.require('test.foo.MyNativeType');
 
 class $Overlay {
   /**
-   * @param {MyNativeType} $thisArg
+   * @param {!MyNativeType} $thisArg
    * @return {void}
    * @public
    */
@@ -54,8 +46,7 @@ class $Overlay {
   static $loadModules() {}
 };
 
-$Util.$setClassMetadata(
-    $Overlay, $Util.$makeClassName('test.foo.MyNativeType'));
+$Util.$setClassMetadata($Overlay, 'test.foo.MyNativeType');
 
 
 exports = $Overlay;

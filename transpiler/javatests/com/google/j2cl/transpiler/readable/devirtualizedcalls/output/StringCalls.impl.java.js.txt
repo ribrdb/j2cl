@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.devirtualizedcalls.StringCalls.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.devirtualizedcalls.StringCalls$impl');
 
 
@@ -94,8 +86,7 @@ class StringCalls extends j_l_Object {
 
 $Util.$setClassMetadata(
     StringCalls,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.devirtualizedcalls.StringCalls'));
+    'com.google.j2cl.transpiler.readable.devirtualizedcalls.StringCalls');
 
 
 

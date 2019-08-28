@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.jsvarargs.Main$SubVarargsConstructorClass.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.jsvarargs.Main.SubVarargsConstructorClass$impl');
 
 
@@ -75,8 +67,7 @@ class SubVarargsConstructorClass extends Object {
 
 $Util.$setClassMetadata(
     SubVarargsConstructorClass,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.jsvarargs.Main$SubVarargsConstructorClass'));
+    'com.google.j2cl.transpiler.readable.jsvarargs.Main$SubVarargsConstructorClass');
 
 
 

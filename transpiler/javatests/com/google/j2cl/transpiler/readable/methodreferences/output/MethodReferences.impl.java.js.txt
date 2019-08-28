@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.methodreferences.MethodReferences.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.methodreferences.MethodReferences$impl');
 
 
@@ -99,9 +91,8 @@ class MethodReferences extends j_l_Object {
    * @public
    */
   m_main___$pp_com_google_j2cl_transpiler_readable_methodreferences() {
-    let /** MethodReferences<T> */ $$qualifier1,
-        /** MethodReferences<*> */ $$qualifier2,
-        /** MethodReferences<*> */ $$qualifier3;
+    let /** MethodReferences<T> */ $$q, /** MethodReferences<*> */ $$q_1,
+        /** MethodReferences<*> */ $$q_2;
     let objectFactory = Producer.$adapt((() => {
       return j_l_Object.$create__();
     }));
@@ -110,10 +101,10 @@ class MethodReferences extends j_l_Object {
           .m_m___$pp_com_google_j2cl_transpiler_readable_methodreferences();
     }));
     objectFactory =
-        ($$qualifier1 =
+        ($$q =
              /**@type {!MethodReferences<T>} */ (MethodReferences.$create__()),
          Producer.$adapt((() => {
-           return $$qualifier1.m_isA__();
+           return $$q.m_isA__();
          })));
     let biFunction =
         /**@type {BiFunction<MethodReferences<T>, (Number|number), ?boolean>} */
@@ -146,10 +137,10 @@ class MethodReferences extends j_l_Object {
       return /**@type {!Array<?number>} */ ($Arrays.$create([arg0_6], Double));
     }));
     objectFactory =
-        ($$qualifier2 =
+        ($$q_1 =
              /**@type {!MethodReferences<*>} */ (MethodReferences.$create__()),
          Producer.$adapt((() => {
-           return $$qualifier2
+           return $$q_1
                .m_self___$pp_com_google_j2cl_transpiler_readable_methodreferences();
          })));
     let function_1 =
@@ -175,10 +166,10 @@ class MethodReferences extends j_l_Object {
           .m_m___$pp_com_google_j2cl_transpiler_readable_methodreferences();
     });
     jsobjectFactory =
-        ($$qualifier3 =
+        ($$q_2 =
              /**@type {!MethodReferences<*>} */ (MethodReferences.$create__()),
          (() => {
-           return $$qualifier3
+           return $$q_2
                .m_self___$pp_com_google_j2cl_transpiler_readable_methodreferences();
          }));
     let jsfunction = ((arg0_11) => {
@@ -239,17 +230,17 @@ class MethodReferences extends j_l_Object {
    * @public
    */
   static $clinit() {
-    let /** * */ $$qualifier0;
+    let /** * */ $$q;
     MethodReferences.$clinit = (() => {});
     MethodReferences.$loadModules();
     j_l_Object.$clinit();
     MethodReferences
         .$f_staticStringProducer__com_google_j2cl_transpiler_readable_methodreferences_MethodReferences =
-        ($$qualifier0 =
+        ($$q =
              MethodReferences
                  .m_m___$pp_com_google_j2cl_transpiler_readable_methodreferences(),
          Producer.$adapt((() => {
-           return $Objects.m_toString__java_lang_Object($$qualifier0);
+           return $Objects.m_toString__java_lang_Object($$q);
          })));
   }
 
@@ -299,8 +290,7 @@ class MethodReferences extends j_l_Object {
 
 $Util.$setClassMetadata(
     MethodReferences,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.methodreferences.MethodReferences'));
+    'com.google.j2cl.transpiler.readable.methodreferences.MethodReferences');
 
 
 /** @private {Producer<?string>} */

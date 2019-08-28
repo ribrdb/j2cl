@@ -1,8 +1,9 @@
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_library")
 
-package(default_visibility = ["//junit/generator/javatests/com/google/j2cl/junit/integration/stacktrace:__pkg__"])
-
-licenses(["notice"])  # Apache 2.0
+package(
+    default_visibility = ["//junit/generator/javatests/com/google/j2cl/junit/integration/stacktrace:__pkg__"],
+    licenses = ["notice"],  # Apache 2.0
+)
 
 load(
     "//junit/generator/javatests/com/google/j2cl/junit/integration:j2cl_junit_integration_test.bzl",
@@ -76,8 +77,8 @@ closure_js_library(
 
 j2cl_test_integration_test_data(
     name = "NativeStacktraceTest",
-    _js_deps = [":stacktrace"],
     extra_defs = ["--inline_functions=false"],
+    native_deps = [":stacktrace"],
     deps = ["//third_party:gwt-jsinterop-annotations"],
 )
 

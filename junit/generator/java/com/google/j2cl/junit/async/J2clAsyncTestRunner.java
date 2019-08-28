@@ -34,12 +34,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 /**
- * Experimental, do not use!
- *
- * <p>Should really be living in guava or xplat for cross platform async testing. This probably
- * should also support a common async abstraction on top of a promise.
- *
- * <p>A test runner that allows for asynchronous test using a structural Promise.
+ * A test runner that allows for asynchronous test using a structural Promise.
  *
  * <p>A structural promise to this runner is a class that conforms to the following conditions:
  *
@@ -53,6 +48,7 @@ import org.junit.runners.model.Statement;
  *       Throwable as parameter
  * </ul>
  */
+// TODO(b/139867020): Move (and potentially rename).
 public class J2clAsyncTestRunner extends BlockJUnit4ClassRunner {
 
   private static final String PROMISE_LIKE =
@@ -61,9 +57,10 @@ public class J2clAsyncTestRunner extends BlockJUnit4ClassRunner {
           + "and an optional 'failure' callback parameter.";
 
   public enum ErrorMessage {
-    TIME_OUT_SET("Method %s() has timeout attribute but doesn't return a promise-like type. "),
-    EXPECTED_EXCEPTION(
-        "Method %s() has expectedException attribute but returns a promise-like type."),
+    ASYNC_NO_TIMEOUT(
+        "Method %s is missing @Test timeout attribute but returns a promise-like" + " type."),
+    ASYNC_HAS_EXPECTED_EXCEPTION(
+        "Method %s has expectedException attribute but returns a promise-like type."),
     NO_THEN_METHOD(
         "Type %s is not a promise-like type. It's missing a 'then' method with two paramters. "
             + PROMISE_LIKE),
@@ -216,12 +213,13 @@ public class J2clAsyncTestRunner extends BlockJUnit4ClassRunner {
 
     // Make sure we have a value greater than zero for test timeout
     if (testAnnotation.timeout() <= 0) {
-      errors.add(makeError(ErrorMessage.TIME_OUT_SET.format(testMethod.getMethod().getName())));
+      errors.add(makeError(ErrorMessage.ASYNC_NO_TIMEOUT.format(testMethod.getMethod().getName())));
     }
 
     if (!testAnnotation.expected().equals(Test.None.class)) {
       errors.add(
-          makeError(ErrorMessage.EXPECTED_EXCEPTION.format(testMethod.getMethod().getName())));
+          makeError(
+              ErrorMessage.ASYNC_HAS_EXPECTED_EXCEPTION.format(testMethod.getMethod().getName())));
     }
   }
 

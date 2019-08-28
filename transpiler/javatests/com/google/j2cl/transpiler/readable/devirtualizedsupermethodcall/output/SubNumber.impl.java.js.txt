@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.devirtualizedsupermethodcall.SubNumber.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.devirtualizedsupermethodcall.SubNumber$impl');
 
 
@@ -118,8 +110,7 @@ class SubNumber extends Number {
 
 $Util.$setClassMetadata(
     SubNumber,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.devirtualizedsupermethodcall.SubNumber'));
+    'com.google.j2cl.transpiler.readable.devirtualizedsupermethodcall.SubNumber');
 
 
 

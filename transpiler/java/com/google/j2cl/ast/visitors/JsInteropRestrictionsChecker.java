@@ -46,7 +46,6 @@ import com.google.j2cl.ast.IntersectionTypeDescriptor;
 import com.google.j2cl.ast.JsEnumInfo;
 import com.google.j2cl.ast.JsMemberType;
 import com.google.j2cl.ast.JsUtils;
-import com.google.j2cl.ast.Literal;
 import com.google.j2cl.ast.Member;
 import com.google.j2cl.ast.MemberDescriptor;
 import com.google.j2cl.ast.Method;
@@ -103,21 +102,6 @@ public class JsInteropRestrictionsChecker {
     for (Type type : compilationUnit.getTypes()) {
       checkType(type);
     }
-  }
-
-  private void checkQualifiedJsName(Type type) {
-    if (type.getDeclaration().isStarOrUnknown()) {
-      if (!type.isNative() || !type.isInterface() || !JsUtils.isGlobal(type.getJsNamespace())) {
-        problems.error(
-            type.getSourcePosition(),
-            "Only native interfaces in the global namespace can be named '%s'.",
-            type.getSimpleJsName());
-      }
-      return;
-    }
-
-    checkJsName(type);
-    checkJsNamespace(type);
   }
 
   private void checkType(Type type) {
@@ -350,7 +334,7 @@ public class JsInteropRestrictionsChecker {
     }
 
     Expression enumFieldValue = getEnumConstantValue(field);
-    if (enumFieldValue == null || enumFieldValue instanceof Literal) {
+    if (enumFieldValue == null || enumFieldValue.isCompileTimeConstant()) {
       return;
     }
     problems.error(
@@ -390,7 +374,7 @@ public class JsInteropRestrictionsChecker {
           messagePrefix + " cannot be static nor JsOverlay nor JsMethod nor JsProperty.");
     }
 
-    if (!isValidJsEnumType(valueTypeDescriptor)) {
+    if (!checkJsEnumCustomValueType(valueTypeDescriptor)) {
       problems.error(
           field.getSourcePosition(),
           messagePrefix + " cannot have the type '%s'.",
@@ -402,7 +386,7 @@ public class JsInteropRestrictionsChecker {
     }
   }
 
-  private boolean isValidJsEnumType(TypeDescriptor valueTypeDescriptor) {
+  private static boolean checkJsEnumCustomValueType(TypeDescriptor valueTypeDescriptor) {
     return (valueTypeDescriptor.isPrimitive()
             && !TypeDescriptors.isPrimitiveLong(valueTypeDescriptor))
         || TypeDescriptors.isJavaLangString(valueTypeDescriptor);
@@ -420,18 +404,7 @@ public class JsInteropRestrictionsChecker {
       return;
     }
 
-    MethodDescriptor constructorDescriptor = constructor.getDescriptor();
-    if (constructorDescriptor.getParameterDescriptors().size() == 1
-        && constructorDescriptor
-            .getParameterDescriptors()
-            .get(0)
-            .getTypeDescriptor()
-            .isSameBaseType(customValueType)
-        && constructor.getBody().getStatements().size() == 1
-        && isValidJsEnumConstructorStatement(
-            constructorDescriptor.getEnclosingTypeDescriptor(),
-            constructor.getBody().getStatements().get(0),
-            constructor.getParameters().get(0))) {
+    if (checkCustomValuedJsEnumConstructor(constructor, customValueType)) {
       return;
     }
     problems.error(
@@ -441,7 +414,49 @@ public class JsInteropRestrictionsChecker {
         constructor.getReadableDescription());
   }
 
-  private boolean isValidJsEnumConstructorStatement(
+  /**
+   * Custom valued JsEnums must have exactly one constructor of the following form:
+   *
+   * <pre>{@code
+   * JsEnumType(CustomValueType parameter) {
+   *   this.value = parameter;
+   * }
+   * }</pre>
+   */
+  private static boolean checkCustomValuedJsEnumConstructor(
+      Method constructor, TypeDescriptor customValueType) {
+    MethodDescriptor constructorDescriptor = constructor.getDescriptor();
+    // Check that the parameter to the constructor is consistent with the custom value type.
+    if (constructorDescriptor.getParameterDescriptors().size() != 1
+        || !constructorDescriptor
+            .getParameterDescriptors()
+            .get(0)
+            .getTypeDescriptor()
+            .isSameBaseType(customValueType)) {
+      // Method declaration is invalid.
+      return false;
+    }
+
+    // Skip the super() call if present to get the only expected statement in the custom valued
+    // JsEnum.
+    int statementIndex = AstUtils.hasSuperCall(constructor) ? 1 : 0;
+
+    // Verify that the body only contains the assignment to the custom value field.
+    return constructor.getBody().getStatements().size() == statementIndex + 1
+        && checkJsEnumConstructorStatement(
+            constructorDescriptor.getEnclosingTypeDescriptor(),
+            constructor.getBody().getStatements().get(statementIndex),
+            constructor.getParameters().get(0));
+  }
+
+  /**
+   * Checks that the only statement in a custom valued JsEnum is of the form:
+   *
+   * <pre>{@code
+   * this.value = parameter;
+   * }</pre>
+   */
+  private static boolean checkJsEnumConstructorStatement(
       DeclaredTypeDescriptor typeDescriptor, Statement statement, Variable valueParameter) {
     if (!(statement instanceof ExpressionStatement)) {
       return false;
@@ -917,7 +932,11 @@ public class JsInteropRestrictionsChecker {
       checkUnusableByJs(member);
     }
 
-    checkQualifiedJsName(member);
+    if (!checkQualifiedJsName(member)) {
+      // Do not check for name collisions if the member has an invalid name.
+      // This avoids reporting cascading error that are irrelevant.
+      return;
+    }
 
     if (isInstanceJsMember(memberDescriptor)) {
       checkNameCollisions(instanceJsMembersByName, member);
@@ -978,19 +997,8 @@ public class JsInteropRestrictionsChecker {
       if (!overriddenMethodDescriptor.isJsMember()) {
         continue;
       }
-      String parentName = overriddenMethodDescriptor.getSimpleJsName();
-      if (!parentName.equals(jsName)) {
-        problems.error(
-            method.getSourcePosition(),
-            "'%s' cannot be assigned JavaScript name '%s' that is different from the"
-                + " JavaScript name of a method it overrides ('%s' with JavaScript name '%s').",
-            member.getReadableDescription(),
-            jsName,
-            overriddenMethodDescriptor.getReadableDescription(),
-            parentName);
-        break;
-      }
 
+      String parentName = overriddenMethodDescriptor.getSimpleJsName();
       if (overriddenMethodDescriptor.isJsMethod() != method.getDescriptor().isJsMethod()) {
         // Overrides can not change JsMethod to JsProperty nor vice versa.
         problems.error(
@@ -1003,27 +1011,56 @@ public class JsInteropRestrictionsChecker {
             parentName);
         break;
       }
+
+      if (!parentName.equals(jsName)) {
+        problems.error(
+            method.getSourcePosition(),
+            "'%s' cannot be assigned JavaScript name '%s' that is different from the"
+                + " JavaScript name of a method it overrides ('%s' with JavaScript name '%s').",
+            member.getReadableDescription(),
+            jsName,
+            overriddenMethodDescriptor.getReadableDescription(),
+            parentName);
+        break;
+      }
     }
   }
 
-  private void checkQualifiedJsName(Member member) {
-    if (member.isConstructor()) {
-      // Constructors always inherit their name and namespace from the enclosing type.
-      // The corresponding checks are done for the type separately.
+  private void checkQualifiedJsName(Type type) {
+    if (type.getDeclaration().isStarOrUnknown()) {
+      if (!type.isNative() || !type.isInterface() || !JsUtils.isGlobal(type.getJsNamespace())) {
+        problems.error(
+            type.getSourcePosition(),
+            "Only native interfaces in the global namespace can be named '%s'.",
+            type.getSimpleJsName());
+      }
       return;
     }
 
-    checkJsName(member);
+    checkJsName(type);
+    checkJsNamespace(type);
+  }
+
+  private boolean checkQualifiedJsName(Member member) {
+    if (member.isConstructor()) {
+      // Constructors always inherit their name and namespace from the enclosing type.
+      // The corresponding checks are done for the type separately.
+      return true;
+    }
+
+    if (!checkJsName(member)) {
+      return false;
+    }
 
     if (member.getJsNamespace() == null) {
-      return;
+      return true;
     }
 
     if (member
         .getJsNamespace()
         .equals(member.getDescriptor().getEnclosingTypeDescriptor().getQualifiedJsName())) {
       // Namespace set by the enclosing type has already been checked.
-      return;
+      return true;
     }
 
     if (!member.isStatic()) {
@@ -1031,7 +1068,7 @@ public class JsInteropRestrictionsChecker {
           member.getSourcePosition(),
           "Instance member '%s' cannot declare a namespace.",
           member.getReadableDescription());
-      return;
+      return false;
     }
 
     if (!member.isNative()) {
@@ -1039,10 +1076,10 @@ public class JsInteropRestrictionsChecker {
           member.getSourcePosition(),
           "Non-native member '%s' cannot declare a namespace.",
           member.getReadableDescription());
-      return;
+      return false;
     }
 
-    checkJsNamespace(member);
+    return checkJsNamespace(member);
   }
 
   private void checkJsOverlay(Member member) {
@@ -1365,29 +1402,31 @@ public class JsInteropRestrictionsChecker {
     }
   }
 
-  private <T extends HasJsNameInfo & HasSourcePosition & HasReadableDescription> void checkJsName(
-      T item) {
+  private <T extends HasJsNameInfo & HasSourcePosition & HasReadableDescription>
+      boolean checkJsName(T item) {
     String jsName = item.getSimpleJsName();
     if (jsName == null || JsUtils.isValidJsIdentifier(jsName)) {
-      return;
+      return true;
     }
     if (item.isNative() && JsUtils.isValidJsQualifiedName(jsName)) {
-      return;
+      return true;
     }
 
     errorInvalidName(jsName, "name", item);
+    return false;
   }
 
   private <T extends HasJsNameInfo & HasSourcePosition & HasReadableDescription>
-      void checkJsNamespace(T item) {
+      boolean checkJsNamespace(T item) {
     String jsNamespace = item.getJsNamespace();
     if (jsNamespace == null
         || JsUtils.isGlobal(jsNamespace)
         || JsUtils.isValidJsQualifiedName(jsNamespace)) {
-      return;
+      return true;
     }
 
     errorInvalidName(jsNamespace, "namespace", item);
+    return false;
   }
 
   private <T extends HasJsNameInfo & HasSourcePosition & HasReadableDescription>
@@ -1739,8 +1778,16 @@ public class JsInteropRestrictionsChecker {
       return LinkedHashMultimap.create();
     }
 
+    // The supertype of an interface is java.lang.Object. java.lang.Object methods need to be
+    // considered when checking for name collisions.
+    // TODO(b/135140069): remove if the model starts including java.lang.Object as the supertype of
+    // interfaces.
+    DeclaredTypeDescriptor superTypeDescriptor =
+        typeDescriptor.isInterface() && !typeDescriptor.isNative()
+            ? TypeDescriptors.get().javaLangObject
+            : typeDescriptor.getSuperTypeDescriptor();
     Multimap<String, MemberDescriptor> instanceMembersByName =
-        collectInstanceNames(typeDescriptor.getSuperTypeDescriptor());
+        collectInstanceNames(superTypeDescriptor);
     for (MemberDescriptor member : typeDescriptor.getDeclaredMemberDescriptors()) {
       if (isInstanceJsMember(member)) {
         addMember(instanceMembersByName, member);

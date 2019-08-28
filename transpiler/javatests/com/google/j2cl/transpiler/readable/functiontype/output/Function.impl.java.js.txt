@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.functiontype.Function.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.functiontype.Function$impl');
 
 
@@ -68,8 +60,7 @@ class c_g_j2cl_transpiler_readable_functiontype_Function {
 
 $Util.$setClassMetadataForInterface(
     c_g_j2cl_transpiler_readable_functiontype_Function,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.functiontype.Function'));
+    'com.google.j2cl.transpiler.readable.functiontype.Function');
 
 
 c_g_j2cl_transpiler_readable_functiontype_Function.$markImplementor(

@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.bridgemethods.TestCase10036$B.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.bridgemethods.TestCase10036.B$impl');
 
 
@@ -49,22 +41,28 @@ class B extends j_l_Object {
   m_get__java_lang_Comparable(value) {}
 
   /**
-   * @abstract
+   * Default method forwarding stub.
    * @override
    * @param {?string} arg0
    * @return {?string}
    * @public
    */
-  m_get__java_lang_String(arg0) {}
+  get(arg0) {
+    return BI3
+        .m_get__$default__com_google_j2cl_transpiler_readable_bridgemethods_TestCase10036_BI3__java_lang_String(
+            this, arg0);
+  }
 
   /**
-   * @abstract
+   * Bridge method for exposing non-JsMethod.
    * @override
    * @param {?string} arg0
    * @return {?string}
    * @public
    */
-  get(arg0) {}
+  m_get__java_lang_String(arg0) {
+    return this.get(arg0);
+  }
 
   /**
    * @return {void}
@@ -105,9 +103,7 @@ class B extends j_l_Object {
 };
 
 $Util.$setClassMetadata(
-    B,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.bridgemethods.TestCase10036$B'));
+    B, 'com.google.j2cl.transpiler.readable.bridgemethods.TestCase10036$B');
 
 
 BI1.$markImplementor(B);

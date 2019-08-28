@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.circularimportuse.Right.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.circularimportuse.Right$impl');
 
 
@@ -89,9 +81,7 @@ class Right extends j_l_Object {
 };
 
 $Util.$setClassMetadata(
-    Right,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.circularimportuse.Right'));
+    Right, 'com.google.j2cl.transpiler.readable.circularimportuse.Right');
 
 
 

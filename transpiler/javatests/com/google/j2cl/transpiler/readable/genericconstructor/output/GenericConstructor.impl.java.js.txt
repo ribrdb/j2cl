@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.genericconstructor.GenericConstructor.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.genericconstructor.GenericConstructor$impl');
 
 
@@ -91,11 +83,9 @@ class GenericConstructor extends j_l_Object {
    * @public
    */
   m_test__() {
-    /**@type {!GenericConstructor<Error>} */ (
-        GenericConstructor.$create__java_lang_Object__java_lang_Object(
-            Exception.$create__(), Error.$create__()));
-    /**@type {!GenericConstructor<Error>} */ (
-        GenericConstructor.$create__java_lang_Object(Exception.$create__()));
+    GenericConstructor.$create__java_lang_Object__java_lang_Object(
+        Exception.$create__(), Error.$create__());
+    GenericConstructor.$create__java_lang_Object(Exception.$create__());
   }
 
   /**
@@ -137,8 +127,7 @@ class GenericConstructor extends j_l_Object {
 
 $Util.$setClassMetadata(
     GenericConstructor,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.genericconstructor.GenericConstructor'));
+    'com.google.j2cl.transpiler.readable.genericconstructor.GenericConstructor');
 
 
 

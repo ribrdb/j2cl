@@ -1,6 +1,8 @@
 # J2CL JsInterop by Example
 
-This is meant to be a quick guide on how to use JsInterop.
+This is meant to be a quick guide on how to use JsInterop. More details can be
+found in the
+[design doc](https://docs.google.com/document/d/10fmlEYIHcyead_4R1S5wKGs1t2I7Fnp_PaNaa7XTEk0/edit?usp=sharing).
 
 ## Calling JavaScript from Java
 
@@ -201,11 +203,11 @@ public class Main {
 // Main.java.js (transpiled)
 class Main {
   /**
-   * @param {number=} d // Note the "=" here.
+   * @param {number=} i // Note the "=" here.
    * @return {void}
    * @public
    */
-  method1(i, d) {}
+  method1(i) {}
 }
 ```
 

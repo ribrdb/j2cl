@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.bridgejsmethod.Main$P.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.bridgejsmethod.Main.P$impl');
 
 
@@ -89,9 +81,7 @@ class P {
 };
 
 $Util.$setClassMetadataForInterface(
-    P,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.bridgejsmethod.Main$P'));
+    P, 'com.google.j2cl.transpiler.readable.bridgejsmethod.Main$P');
 
 
 P.$markImplementor(/** @type {Function} */ (P));

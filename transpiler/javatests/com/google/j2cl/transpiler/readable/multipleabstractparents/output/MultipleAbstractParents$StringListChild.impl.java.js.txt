@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.multipleabstractparents.MultipleAbstractParents$StringListChild.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.multipleabstractparents.MultipleAbstractParents.StringListChild$impl');
 
 
@@ -88,8 +80,7 @@ class StringListChild extends StringList {
 
 $Util.$setClassMetadata(
     StringListChild,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.multipleabstractparents.MultipleAbstractParents$StringListChild'));
+    'com.google.j2cl.transpiler.readable.multipleabstractparents.MultipleAbstractParents$StringListChild');
 
 
 

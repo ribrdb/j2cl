@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.lambdas.Lambdas$Equals.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.lambdas.Lambdas.Equals$impl');
 
 
@@ -34,7 +26,7 @@ class Equals {
 
   /**
    * @template T
-   * @param {Equals<T>} $thisArg
+   * @param {!Equals<T>} $thisArg
    * @return {T}
    * @public
    */
@@ -95,9 +87,7 @@ class Equals {
 };
 
 $Util.$setClassMetadataForInterface(
-    Equals,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.lambdas.Lambdas$Equals'));
+    Equals, 'com.google.j2cl.transpiler.readable.lambdas.Lambdas$Equals');
 
 
 Equals.$markImplementor(/** @type {Function} */ (Equals));

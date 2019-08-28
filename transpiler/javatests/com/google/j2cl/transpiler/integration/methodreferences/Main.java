@@ -15,9 +15,22 @@
  */
 package com.google.j2cl.transpiler.integration.methodreferences;
 
+import static com.google.j2cl.transpiler.utils.Asserts.assertEquals;
+import static com.google.j2cl.transpiler.utils.Asserts.assertFalse;
+import static com.google.j2cl.transpiler.utils.Asserts.assertThrowsClassCastException;
+import static com.google.j2cl.transpiler.utils.Asserts.assertThrowsNullPointerException;
 import static com.google.j2cl.transpiler.utils.Asserts.assertTrue;
 
 public class Main {
+  public static void main(String[] args) {
+    testSuperMethodReferences();
+    testConstructorReferences();
+    testInstanceMethodReferences();
+    testStaticMethodReferences();
+    testQualifierEvaluation();
+    testQualifierEvaluation_observeUninitializedField();
+  }
+
   interface Producer<T> {
     T produce();
   }
@@ -30,59 +43,85 @@ public class Main {
     T[] produce(int size);
   }
 
-  static SomeObject m() {
-    return new SomeObject();
-  }
+  static class Outer {
+    static int instanceNumber;
 
-  static int instanceNumber;
+    static class SomeObject {
+      int someObjectInstanceNumber = Outer.instanceNumber++;
 
-  static class SomeObject {
-    int someObjectInstanceNumber = Main.instanceNumber++;
+      public Boolean isInstanceNumber2() {
+        return someObjectInstanceNumber == 2;
+      }
 
-    public Boolean is2() {
-      return someObjectInstanceNumber == 2;
+      public Boolean isInstanceNumber3() {
+        return someObjectInstanceNumber == 3;
+      }
     }
 
-    public Boolean is3() {
-      return someObjectInstanceNumber == 3;
+    class ObjectCapturingOuter {
+      Outer getOuter() {
+        return Outer.this;
+      }
+    }
+
+    Producer<ObjectCapturingOuter> objectCapturingOuterFactory() {
+      // Constructor member reference with implicit outer instance capture.
+      return ObjectCapturingOuter::new;
     }
   }
 
-  class ObjectCapturingOuter {
-    Main getMain() {
-      return Main.this;
-    }
-  }
-
-  void testConstructorReferences() {
-    Producer<SomeObject> objectFactory = SomeObject::new;
+  private static void testConstructorReferences() {
+    Producer<Outer.SomeObject> objectFactory = Outer.SomeObject::new;
     assertTrue(objectFactory.produce().someObjectInstanceNumber == 0);
     assertTrue(objectFactory.produce().someObjectInstanceNumber == 1);
 
-    Producer<ObjectCapturingOuter> objectCapturingOuterProducer = ObjectCapturingOuter::new;
-    assertTrue(objectCapturingOuterProducer.produce().getMain() == this);
+    Outer outer = new Outer();
+    Producer<Outer.ObjectCapturingOuter> objectCapturingOuterProducer =
+        outer.objectCapturingOuterFactory();
+    assertTrue(objectCapturingOuterProducer.produce().getOuter() == outer);
 
-    ArrayProducer<Object> arrayProducer = SomeObject[]::new;
+    ArrayProducer<Object> arrayProducer = Outer.SomeObject[]::new;
     assertTrue(arrayProducer.produce(10).length == 10);
   }
 
-  void testMethodReferences() {
-    Producer<SomeObject> objectFactory = Main::m;
-    assertTrue(objectFactory.produce().someObjectInstanceNumber == 0);
-    assertTrue(objectFactory.produce().someObjectInstanceNumber == 1);
-
+  private static void testInstanceMethodReferences() {
     // Qualified instance method, make sure that the evaluation of the qualifier only happens once.
-    Producer<Boolean> booleanProducer = new SomeObject()::is2;
+    Producer<Boolean> booleanProducer = new Outer.SomeObject()::isInstanceNumber2;
     assertTrue(booleanProducer.produce());
     assertTrue(booleanProducer.produce());
 
     // Unqualified SomeObject method
-    Predicate<SomeObject> objectPredicate = SomeObject::is3;
-    assertTrue(objectPredicate.apply(new SomeObject()));
-    assertTrue(!objectPredicate.apply(new SomeObject()));
+    Predicate<Outer.SomeObject> objectPredicate = Outer.SomeObject::isInstanceNumber3;
+    assertTrue(objectPredicate.apply(new Outer.SomeObject()));
+    assertTrue(!objectPredicate.apply(new Outer.SomeObject()));
   }
 
-  void testSuperMethodReferences() {
+  private static void testStaticMethodReferences() {
+    Producer<Integer> integerFactory = Main::returnSequenceAsInteger;
+    assertTrue(integerFactory.produce() == 0);
+    assertTrue(integerFactory.produce() == 1);
+
+    // Lambda with autoboxing.
+    integerFactory = Main::returnSequenceAsInt;
+    assertTrue(integerFactory.produce() == 2);
+    assertTrue(integerFactory.produce() == 3);
+  }
+
+  private static int sequenceNumber = 0;
+
+  private static Integer returnSequenceAsInteger() {
+    return sequenceNumber++;
+  }
+
+  private static String returnSequenceAsString() {
+    return "" + sequenceNumber++;
+  }
+
+  private static Integer returnSequenceAsInt() {
+    return sequenceNumber++;
+  }
+
+  private static void testSuperMethodReferences() {
     class A {
       String introduce() {
         return "I am A.";
@@ -103,13 +142,106 @@ public class Main {
     assertTrue(new SubA().superIntroducer().produce().equals("I am A."));
   }
 
-  public static void main(String[] args) {
-    Main m = new Main();
-    instanceNumber = 0;
-    m.testSuperMethodReferences();
-    instanceNumber = 0;
-    m.testConstructorReferences();
-    instanceNumber = 0;
-    m.testMethodReferences();
+  /** Tests different qualifier shapes since J2CL optimizes some of these constructs. */
+  private static void testQualifierEvaluation() {
+    // Variable reference
+    String variable = "Hello";
+    Producer<String> stringProducer = variable::toLowerCase;
+    variable = "GoodBye";
+    // Check that the evaluation of variable happens at taking the reference not at the evaluation
+    // of the lambda.
+    assertEquals("Hello".toLowerCase(), stringProducer.produce());
+
+    // Field reference.
+    class Local {
+      String field = "Hello";
+    }
+    Local local = new Local();
+    stringProducer = local.field::toLowerCase;
+    local.field = "GoodBye";
+    // Check that the evaluation of variable happens at taking the reference not at the evaluation
+    // of the lambda.
+    assertEquals("Hello".toLowerCase(), stringProducer.produce());
+
+    // Static field reference
+    assertFalse(isInitialized);
+    stringProducer = InnerClassWithStaticInitializer.field::toString;
+    // Class initializer should be triggered by just creating the reference.
+    assertTrue(isInitialized);
+
+    // Instantiation
+    stringProducer = new Local()::toString;
+    assertEquals(stringProducer.produce(), stringProducer.produce());
+
+    // Method call
+    stringProducer = returnSequenceAsInteger()::toString;
+    assertEquals(stringProducer.produce(), stringProducer.produce());
+
+    // Binary expression
+    stringProducer = (returnSequenceAsString() + returnSequenceAsString())::toLowerCase;
+    assertEquals(stringProducer.produce(), stringProducer.produce());
+
+    // Cast expression
+    assertThrowsClassCastException(
+        () -> {
+          Producer<String> sp = ((String) (Object) returnSequenceAsInteger())::toLowerCase;
+        });
+
+    // Array access
+    stringProducer = returnsArray()[0]::toLowerCase;
+    assertEquals(stringProducer.produce(), stringProducer.produce());
+
+    // Ternary conditional
+    stringProducer =
+        (returnSequenceAsInt() > 0 ? returnSequenceAsString() : returnSequenceAsString())
+            ::toLowerCase;
+    assertEquals(stringProducer.produce(), stringProducer.produce());
+
+    // Object instantiation
+    stringProducer = new Integer(returnSequenceAsInt())::toString;
+    assertEquals(stringProducer.produce(), stringProducer.produce());
+
+    // TODO(b/132618274): Uncomment test when bug is fixed.
+    // // Array instantiation
+    // stringProducer = new String[] {returnSequenceAsString()}::toString;
+    // assertEquals(stringProducer.produce(), stringProducer.produce());
+  }
+
+  private static String[] returnsArray() {
+    return new String[] {returnSequenceAsString()};
+  }
+
+  private static boolean isInitialized;
+
+  private static class InnerClassWithStaticInitializer {
+    static {
+      isInitialized = true;
+    }
+
+    private static final Object field = new Object();
+  }
+
+  private static void testQualifierEvaluation_observeUninitializedField() {
+    class Super {
+      Super() {
+        // Call polymorphic init to allow referencing final subclass fields before they are
+        // initialized
+        init();
+      }
+
+      void init() {}
+    }
+    class Sub extends Super {
+
+      private Producer<String> stringProducer;
+      private final Integer qualifier = new Integer(2);
+
+      void init() {
+        // Construct the method reference before qualifier is initialized.
+        stringProducer = qualifier::toString;
+      }
+    }
+
+    assertThrowsNullPointerException(() -> new Sub().stringProducer.produce());
   }
 }

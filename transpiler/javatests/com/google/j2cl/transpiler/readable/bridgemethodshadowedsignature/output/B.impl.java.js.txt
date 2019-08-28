@@ -1,19 +1,9 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.bridgemethodshadowedsignature.B.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.bridgemethodshadowedsignature.B$impl');
 
 
 const I = goog.require('com.google.j2cl.transpiler.readable.bridgemethodshadowedsignature.I$impl');
 const j_l_Object = goog.require('java.lang.Object$impl');
 const $Util = goog.require('nativebootstrap.Util$impl');
-
-let Consumer = goog.forwardDeclare('java.util.function.Consumer$impl');
 
 
 /**
@@ -45,15 +35,6 @@ class B extends j_l_Object {
   m_get__java_lang_Object(consumer) {
     return 'B get B2';
   }
-
-  /**
-   * @abstract
-   * @override
-   * @param {Consumer<?>} arg0
-   * @return {?string}
-   * @public
-   */
-  m_get__java_util_function_Consumer(arg0) {}
 
   /**
    * @return {void}
@@ -90,9 +71,7 @@ class B extends j_l_Object {
 };
 
 $Util.$setClassMetadata(
-    B,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.bridgemethodshadowedsignature.B'));
+    B, 'com.google.j2cl.transpiler.readable.bridgemethodshadowedsignature.B');
 
 
 I.$markImplementor(B);

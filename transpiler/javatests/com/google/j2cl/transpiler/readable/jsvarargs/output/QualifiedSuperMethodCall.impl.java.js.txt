@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.jsvarargs.QualifiedSuperMethodCall.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.jsvarargs.QualifiedSuperMethodCall$impl');
 
 
@@ -77,8 +69,7 @@ class QualifiedSuperMethodCall extends Main {
 
 $Util.$setClassMetadata(
     QualifiedSuperMethodCall,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.jsvarargs.QualifiedSuperMethodCall'));
+    'com.google.j2cl.transpiler.readable.jsvarargs.QualifiedSuperMethodCall');
 
 
 

@@ -1,4 +1,6 @@
-licenses(["notice"])  # Apache 2.0
+package(
+    licenses = ["notice"],  # Apache 2.0
+)
 
 load(
     "//transpiler/javatests/com/google/j2cl/transpiler/integration:integration_test.bzl",
@@ -7,7 +9,9 @@ load(
 
 integration_test(
     name = "staticinitfailfast",
-    srcs = glob(["*.java"]),
-    native_srcs = glob(["*.native.js"]),
+    srcs = glob([
+        "*.java",
+        "*.native.js",
+    ]),
     deps = ["//third_party:gwt-jsinterop-annotations-j2cl"],
 )

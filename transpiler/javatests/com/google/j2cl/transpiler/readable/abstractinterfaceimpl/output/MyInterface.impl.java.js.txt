@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.abstractinterfaceimpl.MyInterface.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.abstractinterfaceimpl.MyInterface$impl');
 
 
@@ -90,8 +82,7 @@ class MyInterface {
 
 $Util.$setClassMetadataForInterface(
     MyInterface,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.abstractinterfaceimpl.MyInterface'));
+    'com.google.j2cl.transpiler.readable.abstractinterfaceimpl.MyInterface');
 
 
 MyInterface.$markImplementor(/** @type {Function} */ (MyInterface));

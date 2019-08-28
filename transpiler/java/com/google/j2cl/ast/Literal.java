@@ -16,12 +16,28 @@
 package com.google.j2cl.ast;
 
 import com.google.j2cl.ast.annotations.Visitable;
+import com.google.j2cl.ast.processors.common.Processor;
 
 /** Abstract superclass for value literal expressions. */
 @Visitable
 public abstract class Literal extends Expression {
   @Override
   public boolean isIdempotent() {
+    return true;
+  }
+
+  @Override
+  public boolean isEffectivelyInvariant() {
+    return true;
+  }
+
+  @Override
+  public boolean hasSideEffects() {
+    return false;
+  }
+
+  @Override
+  public boolean isCompileTimeConstant() {
     return true;
   }
 

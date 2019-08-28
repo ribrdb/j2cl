@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.enums.Enum3.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.enums.Enum3$impl');
 
 
@@ -202,8 +194,7 @@ class Enum3 extends Enum {
 };
 
 $Util.$setClassMetadataForEnum(
-    Enum3,
-    $Util.$makeClassName('com.google.j2cl.transpiler.readable.enums.Enum3'));
+    Enum3, 'com.google.j2cl.transpiler.readable.enums.Enum3');
 
 
 /** @private {!Enum3} */

@@ -19,6 +19,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.collect.Iterables;
 import com.google.j2cl.ast.annotations.Visitable;
+import com.google.j2cl.ast.processors.common.Processor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,6 +56,21 @@ public class MultiExpression extends Expression {
   @Override
   public boolean isLValue() {
     return Iterables.getLast(expressions).isLValue();
+  }
+
+  @Override
+  public boolean isEffectivelyInvariant() {
+    return expressions.stream().allMatch(Expression::isEffectivelyInvariant);
+  }
+
+  @Override
+  public boolean hasSideEffects() {
+    return expressions.stream().allMatch(Expression::hasSideEffects);
+  }
+
+  @Override
+  public boolean isCompileTimeConstant() {
+    return expressions.stream().allMatch(Expression::isCompileTimeConstant);
   }
 
   @Override

@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.staticfieldaccesslevels.StaticFieldAccessLevels.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.staticfieldaccesslevels.StaticFieldAccessLevels$impl');
 
 
@@ -186,8 +178,7 @@ class StaticFieldAccessLevels extends j_l_Object {
 
 $Util.$setClassMetadata(
     StaticFieldAccessLevels,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.staticfieldaccesslevels.StaticFieldAccessLevels'));
+    'com.google.j2cl.transpiler.readable.staticfieldaccesslevels.StaticFieldAccessLevels');
 
 
 /** @private {number} */

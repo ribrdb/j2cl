@@ -394,6 +394,19 @@ public class JsInteropRestrictionsCheckerTest extends TestCase {
                 + "cannot both use the same JavaScript name 'show'.");
   }
 
+  public void testCollidingJsMethodWithObjectMethod() {
+    assertTranspileFails(
+            "Buggy",
+            "import jsinterop.annotations.*;",
+            "interface Buggy {",
+            "  @JsMethod(name = \"equals\")",
+            "  boolean notEquals(Object o);",
+            "}")
+        .assertErrorsWithoutSourcePosition(
+            "'boolean Buggy.notEquals(Object)' and 'boolean Object.equals(Object)' cannot both use "
+                + "the same JavaScript name 'equals'.");
+  }
+
   public void testCollidingMethodToMethodJsTypeFails() {
     assertTranspileFails(
             "Buggy",
@@ -490,7 +503,7 @@ public class JsInteropRestrictionsCheckerTest extends TestCase {
             "class Main {",
             "  public static void main() {",
             "    Object o;",
-            // TODO(b/67913644): This lambda should be rejected but it is not.
+            // TODO(b/71911586): This lambda should be rejected but it is not.
             "    o = (IBuggy2 & IBuggy3) (b) -> {};",
             "  }",
             "}")
@@ -904,6 +917,15 @@ public class JsInteropRestrictionsCheckerTest extends TestCase {
             "}",
             "@JsType public class Buggy extends Super {",
             "  @JsProperty public void setX(int x) {  }",
+            "}",
+            "class OverrideWithoutJsType extends Super {",
+            "  @JsProperty public void setX(int x) {  }",
+            "}",
+            "class OverrideWithoutJsPropertyNorJsType extends Super {",
+            "  public void setX(int x) {  }",
+            "}",
+            "@JsType class OverrideWithoutJsProperty extends Super {",
+            "  public void setX(int x) {  }",
             "}")
         .assertNoWarnings();
   }
@@ -914,15 +936,20 @@ public class JsInteropRestrictionsCheckerTest extends TestCase {
             "import jsinterop.annotations.*;",
             "class Super {",
             "  @JsMethod public int getY() { return 5; }",
-            "  @JsProperty public void setZ(int z) {}",
+            "  @JsProperty public void setX(int x) {}",
+            "  @JsProperty(name = \"setZ\")  public void setZ(int z) {}",
             "}",
             "public class Buggy extends Super {",
             "  @JsProperty(name = \"getY\") public int getY() { return 6; }",
-            "  @JsMethod(name = \"z\") public void setZ(int z) {}",
+            "  @JsMethod public void setX(int x) {  }",
+            "  @JsMethod public void setZ(int z) {}",
             "}")
         .assertErrorsWithoutSourcePosition(
             "JsProperty 'int Buggy.getY()' cannot override JsMethod 'int Super.getY()'.",
-            "JsMethod 'void Buggy.setZ(int z)' cannot override JsProperty 'void Super.setZ(int)'.");
+            "JsMethod 'void Buggy.setZ(int z)' cannot override JsProperty "
+                + "'void Super.setZ(int)'.",
+            "JsMethod 'void Buggy.setX(int x)' cannot override JsProperty "
+                + "'void Super.setX(int)'.");
   }
 
   // GWT enforces some restriction on JSNI JsMethods. In J2CL,  JSNI is just a comment and no test
@@ -988,7 +1015,7 @@ public class JsInteropRestrictionsCheckerTest extends TestCase {
             "  public NativeBuggy(int a) {}",
             "}",
             "@JsType (isNative = true)",
-            "class NativeSubNativeBuggy extends NativeBuggy{",
+            "class NativeSubNativeBuggy extends NativeBuggy {",
             "  public NativeSubNativeBuggy() { super(1); }",
             "  public NativeSubNativeBuggy(int a) { super();}",
             "}",
@@ -1235,16 +1262,20 @@ public class JsInteropRestrictionsCheckerTest extends TestCase {
     assertTranspileFails(
             "Buggy",
             "import jsinterop.annotations.*;",
-            "@JsType(namespace = \"a.b.\") public class Buggy {",
+            "@JsType class Super {",
+            "   @JsMethod(name = \"custom\") public void r() {}",
+            "}",
+            "@JsType(namespace = \"a.b.\") public class Buggy extends Super {",
             "   @JsMethod(namespace = \"34s\") public native static void m();",
             "   @JsMethod(namespace = \"\") public native static void o();",
             "   @JsProperty(namespace = \"\") public int p;",
             "   @JsMethod(namespace = \"a\") public void q() {}",
+            "   @JsMethod(namespace = \"b\") public void r() {}",
             "}",
             "@JsType(isNative = true) class NativeClass {",
             "   @JsProperty(namespace = \"s^\") public static int  n;",
             "}",
-            "@JsType(namespace = \"<window>\") class JsTypeOnWindow{",
+            "@JsType(namespace = \"<window>\") class JsTypeOnWindow {",
             "   @JsProperty(namespace = \"<window>\") public static int r;",
             "   @JsMethod(namespace = \"<window>\") public static  void s() {}",
             "}",
@@ -1262,6 +1293,7 @@ public class JsInteropRestrictionsCheckerTest extends TestCase {
             "'void Buggy.o()' cannot have an empty namespace.",
             "Instance member 'Buggy.p' cannot declare a namespace.",
             "Instance member 'void Buggy.q()' cannot declare a namespace.",
+            "Instance member 'void Buggy.r()' cannot declare a namespace.",
             "'NativeClass.n' has invalid namespace 's^'.",
             "Non-native member 'JsTypeOnWindow.r' cannot declare a namespace.",
             "Non-native member 'void JsTypeOnWindow.s()' cannot declare a namespace.",
@@ -1636,6 +1668,8 @@ public class JsInteropRestrictionsCheckerTest extends TestCase {
             "    A.name();",
             "    MyJsEnum.values();",
             "    MyJsEnum.valueOf(null);",
+            // TODO(b/132736149): make sure the following statement is rejected.
+            "    EnumList<MyJsEnum> myJsEnumList = null;",
             "  }",
             "  int value = 5;",
             "  int instanceField;",
@@ -1671,6 +1705,8 @@ public class JsInteropRestrictionsCheckerTest extends TestCase {
             "}",
             "interface Consumer<T> {",
             "  void accept(T t);",
+            "}",
+            "interface EnumList<E extends Enum<E>> {",
             "}")
         .assertErrorsWithoutSourcePosition(
             "Non-custom-valued JsEnum 'MyJsEnum' cannot have constructor 'MyJsEnum()'.",
@@ -2245,13 +2281,13 @@ public class JsInteropRestrictionsCheckerTest extends TestCase {
             "Buggy",
             "import jsinterop.annotations.*;",
             "@JsType(isNative=true) interface Interface {",
-            "  @JsOverlay default void someOtherMethod(){}",
+            "  @JsOverlay default void someOtherMethod() {}",
             "}",
             "class OtherClass implements Interface {",
             "  public void someOtherMethod() {}",
             "}",
             "@JsType(isNative=true) public interface Buggy extends Interface {",
-            "  default void someMethod(){}",
+            "  default void someMethod() {}",
             "  void someOtherMethod();",
             "}")
         .assertErrorsWithoutSourcePosition(
@@ -2389,7 +2425,7 @@ public class JsInteropRestrictionsCheckerTest extends TestCase {
             "@JsType(isNative = true)",
             "public interface Buggy {",
             "  @JsOverlay Object obj = new Object();",
-            "  @JsOverlay default void someOverlayMethod(){};",
+            "  @JsOverlay default void someOverlayMethod() {};",
             "}")
         .assertNoWarnings();
   }
@@ -3239,7 +3275,8 @@ public class JsInteropRestrictionsCheckerTest extends TestCase {
             "}",
             "public class Buggy extends Parent implements Foo {}")
         .assertNoWarnings();
-    // TODO(b/27597597): Finalize checker implementation and enable this test.
+    // TODO(b/37579830): This error should be emitted once accidental overrides are handled in
+    //  restriction checking.
     //  "Line 10: [unusable-by-js] Type of parameter 'x' in "
     //      + "'void EntryPoint.Parent.doIt(Class)' (exposed by 'EntryPoint.Buggy') is not "
     //      + "usable by but exposed to JavaScript.");

@@ -210,7 +210,7 @@ public class TranspilerTester {
     public TranspileResult assertErrorsContainsSnippets(String... snippets) {
       assertThat(getProblems().getErrors())
           .comparingElementsUsing(Correspondence.from(String::contains, "contained within"))
-          .containsAllIn(Arrays.asList(snippets));
+          .containsAtLeastElementsIn(Arrays.asList(snippets));
       return this;
     }
 
@@ -269,19 +269,13 @@ public class TranspilerTester {
         Pattern.compile("(?:(?:Error)|(?:Warning))(?::[\\w.]+:\\d+)?: (?<message>.*)");
 
     private static final Correspondence<String, String> ERROR_WITHOUT_SOURCE_POSITION_COMPARATOR =
-        new Correspondence<String, String>() {
-          @Override
-          public boolean compare(String actual, String expected) {
-            Matcher matcher = messagePattern.matcher(actual);
-            checkState(matcher.matches());
-            return matcher.group("message").equals(expected);
-          }
+        Correspondence.from(TranspileResult::compare, "contained within");
 
-          @Override
-          public String toString() {
-            return "contained within";
-          }
-        };
+    private static boolean compare(String actual, String expected) {
+      Matcher matcher = messagePattern.matcher(actual);
+      checkState(matcher.matches());
+      return matcher.group("message").equals(expected);
+    }
   }
 
   private static TranspileResult invokeTranspiler(Iterable<String> args, Path outputPath) {

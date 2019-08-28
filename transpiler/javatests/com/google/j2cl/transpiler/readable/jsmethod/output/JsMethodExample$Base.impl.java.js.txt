@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.jsmethod.JsMethodExample$Base.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.jsmethod.JsMethodExample.Base$impl');
 
 
@@ -75,9 +67,7 @@ class Base extends j_l_Object {
 };
 
 $Util.$setClassMetadata(
-    Base,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.jsmethod.JsMethodExample$Base'));
+    Base, 'com.google.j2cl.transpiler.readable.jsmethod.JsMethodExample$Base');
 
 
 

@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.abstractinterfaceimpl.AbstractInterfaceImpl.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.abstractinterfaceimpl.AbstractInterfaceImpl$impl');
 
 
@@ -33,14 +25,6 @@ class AbstractInterfaceImpl extends j_l_Object {
   $ctor__com_google_j2cl_transpiler_readable_abstractinterfaceimpl_AbstractInterfaceImpl__() {
     this.$ctor__java_lang_Object__();
   }
-
-  /**
-   * @abstract
-   * @override
-   * @return {number}
-   * @public
-   */
-  m_foo__() {}
 
   /**
    * @return {void}
@@ -78,8 +62,7 @@ class AbstractInterfaceImpl extends j_l_Object {
 
 $Util.$setClassMetadata(
     AbstractInterfaceImpl,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.abstractinterfaceimpl.AbstractInterfaceImpl'));
+    'com.google.j2cl.transpiler.readable.abstractinterfaceimpl.AbstractInterfaceImpl');
 
 
 MyInterface.$markImplementor(AbstractInterfaceImpl);

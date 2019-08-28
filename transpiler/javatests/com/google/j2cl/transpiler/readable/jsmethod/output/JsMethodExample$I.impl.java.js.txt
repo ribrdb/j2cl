@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.jsmethod.JsMethodExample$I.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.jsmethod.JsMethodExample.I$impl');
 
 
@@ -90,9 +82,7 @@ class I {
 };
 
 $Util.$setClassMetadataForInterface(
-    I,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.jsmethod.JsMethodExample$I'));
+    I, 'com.google.j2cl.transpiler.readable.jsmethod.JsMethodExample$I');
 
 
 I.$markImplementor(/** @type {Function} */ (I));

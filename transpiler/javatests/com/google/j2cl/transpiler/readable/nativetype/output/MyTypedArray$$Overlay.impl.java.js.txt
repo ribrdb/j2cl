@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.nativetype.MyTypedArray$$Overlay.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.nativetype.MyTypedArray.$Overlay$impl');
 
 
@@ -15,7 +7,7 @@ const $Util = goog.require('nativebootstrap.Util$impl');
 class $Overlay {
   /**
    * @template T
-   * @param {Array<T>} $thisArg
+   * @param {!Array<T>} $thisArg
    * @return {number}
    * @public
    */
@@ -27,7 +19,7 @@ class $Overlay {
 
   /**
    * @template T
-   * @param {Array<T>} $thisArg
+   * @param {!Array<T>} $thisArg
    * @param {number} index
    * @return {T}
    * @public
@@ -62,7 +54,7 @@ class $Overlay {
   static $loadModules() {}
 };
 
-$Util.$setClassMetadata($Overlay, $Util.$makeClassName('Array'));
+$Util.$setClassMetadata($Overlay, 'Array');
 
 
 exports = $Overlay;

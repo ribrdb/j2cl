@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.supermethodcall.GrandParent.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.supermethodcall.GrandParent$impl');
 
 
@@ -98,8 +90,7 @@ class GrandParent extends j_l_Object {
 
 $Util.$setClassMetadata(
     GrandParent,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.supermethodcall.GrandParent'));
+    'com.google.j2cl.transpiler.readable.supermethodcall.GrandParent');
 
 
 

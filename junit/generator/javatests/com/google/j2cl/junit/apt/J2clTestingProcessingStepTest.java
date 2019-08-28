@@ -197,6 +197,20 @@ public class J2clTestingProcessingStepTest {
     assertError(ErrorMessage.HAS_TIMEOUT, TestReturnsVoidTimeoutProvided.class, "test");
   }
 
+  @Test
+  public void testOverriddenTests() {
+    TestClass concreteTestClass = executeProcessorOnTest(JUnit4ConcreteSubclassTestCase.class);
+    assertThat(concreteTestClass.testMethods())
+        .containsExactly(method("testOverriddenWithoutTest"), method("testOverriddenWithTest"))
+        .inOrder();
+  }
+
+  @Test
+  public void testClassLevelIgnore() {
+    TestClass concreteTestClass = executeProcessorOnTest(JUnit4ClassLevelIgnoreTestCase.class);
+    assertThat(concreteTestClass.testMethods()).isEmpty();
+  }
+
   private void assertError(ErrorMessage expectedError, Class<?> testClass) {
     assertMessage(expectedError, testClass.getCanonicalName(), testClass);
   }

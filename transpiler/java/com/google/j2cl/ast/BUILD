@@ -1,6 +1,7 @@
-package(default_visibility = ["//transpiler:__subpackages__"])
-
-licenses(["notice"])  # Apache 2.0
+package(
+    default_visibility = ["//transpiler:__subpackages__"],
+    licenses = ["notice"],  # Apache 2.0
+)
 
 java_library(
     name = "ast",
@@ -10,6 +11,7 @@ java_library(
         "//third_party:guava",
         "//third_party:jsr305_annotations",
         "//transpiler/java/com/google/j2cl/ast/annotations",
+        "//transpiler/java/com/google/j2cl/ast/processors/common",
         "//transpiler/java/com/google/j2cl/common",
     ],
 )

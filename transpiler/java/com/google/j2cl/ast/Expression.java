@@ -16,6 +16,7 @@
 package com.google.j2cl.ast;
 
 import com.google.j2cl.ast.annotations.Visitable;
+import com.google.j2cl.ast.processors.common.Processor;
 import com.google.j2cl.common.SourcePosition;
 
 /** Base class for expressions. */
@@ -39,6 +40,25 @@ public abstract class Expression extends Node implements Cloneable<Expression> {
    * same resulting state and value.
    */
   public boolean isIdempotent() {
+    return false;
+  }
+
+  /**
+   * Returns true if the expression does not have side effects (including triggering class
+   * initializers) and its evaluation results on the same value if it is moved forward in the same
+   * or an enclosed scope.
+   */
+  public boolean isEffectivelyInvariant() {
+    return false;
+  }
+
+  /** Returns true if the expression has side effects. */
+  public boolean hasSideEffects() {
+    return true;
+  }
+
+  /** Returns true if the expression value can be computed at compile time. */
+  public boolean isCompileTimeConstant() {
     return false;
   }
 
@@ -97,6 +117,11 @@ public abstract class Expression extends Node implements Cloneable<Expression> {
    * the meaning of expressions enclosing it.
    */
   public boolean areEnclosingParenthesisUnnecessary() {
+    return false;
+  }
+
+  /** Returns true if the expression is guaranteed to be a non null string. */
+  public boolean isNonNullString() {
     return false;
   }
 

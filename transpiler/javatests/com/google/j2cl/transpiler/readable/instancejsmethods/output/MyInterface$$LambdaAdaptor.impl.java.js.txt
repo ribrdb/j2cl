@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.instancejsmethods.MyInterface$$LambdaAdaptor.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.instancejsmethods.MyInterface.$LambdaAdaptor$impl');
 
 
@@ -91,8 +83,7 @@ class $LambdaAdaptor extends j_l_Object {
 
 $Util.$setClassMetadata(
     $LambdaAdaptor,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.instancejsmethods.MyInterface$$LambdaAdaptor'));
+    'com.google.j2cl.transpiler.readable.instancejsmethods.MyInterface$$LambdaAdaptor');
 
 
 MyInterface.$markImplementor($LambdaAdaptor);

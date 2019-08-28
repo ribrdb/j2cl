@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.jsconstructor.JsConstructorClass$D.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.jsconstructor.JsConstructorClass.D$impl');
 
 
@@ -110,8 +102,7 @@ class D extends B {
 
 $Util.$setClassMetadata(
     D,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.jsconstructor.JsConstructorClass$D'));
+    'com.google.j2cl.transpiler.readable.jsconstructor.JsConstructorClass$D');
 
 
 

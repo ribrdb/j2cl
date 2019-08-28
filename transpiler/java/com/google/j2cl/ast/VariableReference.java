@@ -18,6 +18,7 @@ package com.google.j2cl.ast;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.j2cl.ast.annotations.Visitable;
+import com.google.j2cl.ast.processors.common.Processor;
 
 /**
  * Class for variable reference.
@@ -48,6 +49,16 @@ public class VariableReference extends Expression {
   @Override
   public boolean isIdempotent() {
     return true;
+  }
+
+  @Override
+  public boolean isEffectivelyInvariant() {
+    return target.isFinal();
+  }
+
+  @Override
+  public boolean hasSideEffects() {
+    return false;
   }
 
   @Override

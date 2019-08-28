@@ -79,14 +79,14 @@ import com.google.j2cl.ast.visitors.NormalizeTryWithResources;
 import com.google.j2cl.ast.visitors.NormalizeTypeLiterals;
 import com.google.j2cl.ast.visitors.OptimizeAnonymousInnerClassesToFunctionExpressions;
 import com.google.j2cl.ast.visitors.PackagePrivateMethodsDispatcher;
+import com.google.j2cl.ast.visitors.RemoveNoopStatements;
 import com.google.j2cl.ast.visitors.RemoveUnneededJsDocCasts;
-import com.google.j2cl.ast.visitors.UnimplementedMethodsCreator;
+import com.google.j2cl.ast.visitors.RewriteStringEquals;
 import com.google.j2cl.ast.visitors.VerifyParamAndArgCounts;
 import com.google.j2cl.ast.visitors.VerifySingleAstReference;
 import com.google.j2cl.ast.visitors.VerifyVariableScoping;
 import com.google.j2cl.common.Problems;
 import com.google.j2cl.common.Problems.FatalError;
-import com.google.j2cl.frontend.Frontend;
 import com.google.j2cl.generator.OutputGeneratorStage;
 import java.io.IOException;
 import java.nio.file.FileSystem;
@@ -107,7 +107,7 @@ class J2clTranspiler {
         executorService.submit(() -> new J2clTranspiler(options).transpileImpl());
     // Shutdown the executor service since it will only run a single transpilation. If not shutdown
     // it prevents the JVM from ending the process (see Executors.newFixedThreadPool()). This is not
-    // normally obvserved since the transpiler in normal circumstances ends with System.exit() which
+    // normally observed since the transpiler in normal circumstances ends with System.exit() which
     // ends all threads. But when the transpilation throws an exception, the exception propagates
     // out of main() and the process lingers due the live threads from these executors.
     executorService.shutdown();
@@ -124,11 +124,13 @@ class J2clTranspiler {
   private Problems transpileImpl() {
     try {
       List<CompilationUnit> j2clUnits =
-          Frontend.getCompilationUnits(
-              options.getClasspaths(),
-              options.getSources(),
-              options.getGenerateKytheIndexingMetadata(),
-              problems);
+          options
+              .getFrontend()
+              .getCompilationUnits(
+                  options.getClasspaths(),
+                  options.getSources(),
+                  options.getGenerateKytheIndexingMetadata(),
+                  problems);
       if (!j2clUnits.isEmpty()) {
         checkUnits(j2clUnits);
         normalizeUnits(j2clUnits);
@@ -163,6 +165,9 @@ class J2clTranspiler {
             new PackagePrivateMethodsDispatcher(),
             new BridgeMethodsCreator(),
             new JsBridgeMethodsCreator(),
+            // TODO(b/31865368): Remove RewriteStringEquals pass once delayed field initialization
+            //  is introduced and String.java gets updated to use it.
+            new RewriteStringEquals(),
             new DevirtualizeBoxedTypesAndJsFunctionImplementations(),
             new NormalizeTryWithResources(),
             new NormalizeCatchClauses(),
@@ -225,13 +230,7 @@ class J2clTranspiler {
             // TODO(b/35241823): Revisit this pass if jscompiler adds a way to express constraints
             // to template variables.
             new InsertCastsToTypeBounds(),
-            new RemoveUnneededJsDocCasts(),
-            new NormalizeJsDocCastExpressions(),
 
-            // Dodge OTI limitations.
-            // TODO(b/30365337): remove after JSCompiler stops requiring unnecessary abstract
-            // methods on abstract classes.
-            new UnimplementedMethodsCreator(),
             // TODO(b/72652198): remove the temporary fix once switch to JSCompiler's new type
             // checker.
             new InsertTypeAnnotationOnGenericReturnTypes(),
@@ -242,9 +241,13 @@ class J2clTranspiler {
             // variable motion.
             new NormalizeMultiExpressions(),
             new MoveVariableDeclarationsToEnclosingBlock(),
+            // Remove redundant JsDocCasts.
+            new RemoveUnneededJsDocCasts(),
+            new NormalizeJsDocCastExpressions(),
 
-            // Handle await keyword
+            // Handle await keyword.
             new NormalizeJsAwaitMethodInvocations(),
+            new RemoveNoopStatements(),
 
             // Enrich source mapping information for better stack deobfuscation.
             new FilloutMissingSourceMapInformation());

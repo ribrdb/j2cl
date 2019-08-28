@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.libraryinfo.Main$FunctionnalInterface.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.libraryinfo.Main.FunctionnalInterface$impl');
 
 
@@ -90,8 +82,7 @@ class FunctionnalInterface {
 
 $Util.$setClassMetadataForInterface(
     FunctionnalInterface,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.libraryinfo.Main$FunctionnalInterface'));
+    'com.google.j2cl.transpiler.readable.libraryinfo.Main$FunctionnalInterface');
 
 
 FunctionnalInterface.$markImplementor(

@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.localclasswithoutergenerics.LocalClassWithOuterGenerics$1Bar.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.localclasswithoutergenerics.LocalClassWithOuterGenerics.$1Bar$impl');
 
 
@@ -89,8 +81,7 @@ class $1Bar extends j_l_Object {
 
 $Util.$setClassMetadata(
     $1Bar,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.localclasswithoutergenerics.LocalClassWithOuterGenerics$1Bar'));
+    'com.google.j2cl.transpiler.readable.localclasswithoutergenerics.LocalClassWithOuterGenerics$1Bar');
 
 
 

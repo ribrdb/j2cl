@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.boundedtypesupercall.Main$Bar$1.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.boundedtypesupercall.Main.Bar.$1$impl');
 
 
@@ -103,9 +95,7 @@ class $1 extends Foo {
 };
 
 $Util.$setClassMetadata(
-    $1,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.boundedtypesupercall.Main$Bar$1'));
+    $1, 'com.google.j2cl.transpiler.readable.boundedtypesupercall.Main$Bar$1');
 
 
 

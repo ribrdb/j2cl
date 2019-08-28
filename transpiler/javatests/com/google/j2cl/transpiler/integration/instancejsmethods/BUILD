@@ -1,4 +1,6 @@
-licenses(["notice"])  # Apache 2.0
+package(
+    licenses = ["notice"],  # Apache 2.0
+)
 
 load("//build_defs:rules.bzl", "j2cl_library")
 load(
@@ -41,8 +43,10 @@ j2cl_library(
 # blaze test :uncompiled_test
 integration_test(
     name = "instancejsmethods",
-    srcs = ["Main.java"],
-    native_srcs = ["Main.native.js"],
+    srcs = [
+        "Main.java",
+        "Main.native.js",
+    ],
     deps = [
         ":Child",
         ":MyInterface",

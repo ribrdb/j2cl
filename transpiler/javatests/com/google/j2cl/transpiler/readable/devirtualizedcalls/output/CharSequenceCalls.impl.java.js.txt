@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.devirtualizedcalls.CharSequenceCalls.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.devirtualizedcalls.CharSequenceCalls$impl');
 
 
@@ -100,8 +92,7 @@ class CharSequenceCalls extends j_l_Object {
 
 $Util.$setClassMetadata(
     CharSequenceCalls,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.devirtualizedcalls.CharSequenceCalls'));
+    'com.google.j2cl.transpiler.readable.devirtualizedcalls.CharSequenceCalls');
 
 
 

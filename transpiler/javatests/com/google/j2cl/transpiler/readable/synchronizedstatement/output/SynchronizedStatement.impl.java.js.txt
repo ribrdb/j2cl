@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.synchronizedstatement.SynchronizedStatement.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.synchronizedstatement.SynchronizedStatement$impl');
 
 
@@ -95,8 +87,7 @@ class SynchronizedStatement extends j_l_Object {
 
 $Util.$setClassMetadata(
     SynchronizedStatement,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.synchronizedstatement.SynchronizedStatement'));
+    'com.google.j2cl.transpiler.readable.synchronizedstatement.SynchronizedStatement');
 
 
 

@@ -107,16 +107,6 @@ public class JavaScriptImplGenerator extends JavaScriptGenerator {
   @Override
   public String renderOutput() {
     try {
-      renderFileOverview(
-          "const",
-          "extraRequire",
-          "missingOverride",
-          "missingRequire",
-          "suspiciousCode",
-          "transitionalSuspiciousCodeWarnings",
-          "unusedLocalVariables",
-          "uselessCode",
-          "strictModuleDepCheck");
       renderImports();
       if (type.getDeclaration().isJsEnum()) {
         // TODO(b/117150539): Decide if native.js files are allowed on JsEnum or not, and implement
@@ -543,7 +533,7 @@ public class JavaScriptImplGenerator extends JavaScriptGenerator {
             + ";");
   }
 
-  // TODO(tdeegan): Move this to the ast in a normalization pass.
+  // TODO(b/34928687): Move this to the ast in a normalization pass.
   private void renderIsAssignableFromMethod() {
     if (type.isJsOverlayImplementation()
         || type.containsMethod(MethodDescriptor.IS_ASSIGNABLE_FROM_METHOD_NAME)) {
@@ -631,7 +621,7 @@ public class JavaScriptImplGenerator extends JavaScriptGenerator {
             ? targetTypeDescriptor.getQualifiedJsName()
             : targetTypeDescriptor.getQualifiedBinaryName();
 
-    String obfuscatableName = utilAlias + ".$makeClassName('" + name + "')";
+    String obfuscatableName = "'" + name + "'";
     String className = environment.aliasForType(type.getDeclaration());
     if (targetTypeDescriptor.isInterface()) {
       sourceBuilder.appendln(

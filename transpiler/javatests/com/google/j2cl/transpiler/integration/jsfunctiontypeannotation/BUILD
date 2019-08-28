@@ -1,4 +1,6 @@
-licenses(["notice"])  # Apache 2.0
+package(
+    licenses = ["notice"],  # Apache 2.0
+)
 
 load(
     "//transpiler/javatests/com/google/j2cl/transpiler/integration:integration_test.bzl",
@@ -11,8 +13,10 @@ load(
 # blaze test :uncompiled_test
 integration_test(
     name = "jsfunctiontypeannotation",
-    srcs = glob(["*.java"]),
-    native_srcs = ["Main.native.js"],
+    srcs = glob([
+        "*.java",
+        "*.js",
+    ]),
     suppress = ["JSC_TYPE_MISMATCH"],
     deps = ["//third_party:gwt-jsinterop-annotations-j2cl"],
 )

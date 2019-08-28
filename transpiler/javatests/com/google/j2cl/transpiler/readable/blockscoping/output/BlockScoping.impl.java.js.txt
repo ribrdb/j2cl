@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.blockscoping.BlockScoping.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.blockscoping.BlockScoping$impl');
 
 
@@ -86,8 +78,7 @@ class BlockScoping extends j_l_Object {
 
 $Util.$setClassMetadata(
     BlockScoping,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.blockscoping.BlockScoping'));
+    'com.google.j2cl.transpiler.readable.blockscoping.BlockScoping');
 
 
 

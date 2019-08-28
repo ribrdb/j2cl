@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.packageprivatemethods.package1.Child.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.packageprivatemethods.package1.Child$impl');
 
 
@@ -133,8 +125,7 @@ class Child extends Parent {
 
 $Util.$setClassMetadata(
     Child,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.packageprivatemethods.package1.Child'));
+    'com.google.j2cl.transpiler.readable.packageprivatemethods.package1.Child');
 
 
 

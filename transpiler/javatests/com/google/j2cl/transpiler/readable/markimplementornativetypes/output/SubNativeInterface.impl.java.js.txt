@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.markimplementornativetypes.SubNativeInterface.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.markimplementornativetypes.SubNativeInterface$impl');
 
 
@@ -75,8 +67,7 @@ class SubNativeInterface {
 
 $Util.$setClassMetadataForInterface(
     SubNativeInterface,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.markimplementornativetypes.SubNativeInterface'));
+    'com.google.j2cl.transpiler.readable.markimplementornativetypes.SubNativeInterface');
 
 
 SubNativeInterface.$markImplementor(

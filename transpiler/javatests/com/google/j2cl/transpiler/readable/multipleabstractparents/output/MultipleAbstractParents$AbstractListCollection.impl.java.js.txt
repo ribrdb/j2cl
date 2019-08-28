@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.multipleabstractparents.MultipleAbstractParents$AbstractListCollection.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.multipleabstractparents.MultipleAbstractParents.AbstractListCollection$impl');
 
 
@@ -36,15 +28,6 @@ class AbstractListCollection extends j_l_Object {
   $ctor__com_google_j2cl_transpiler_readable_multipleabstractparents_MultipleAbstractParents_AbstractListCollection__() {
     this.$ctor__java_lang_Object__();
   }
-
-  /**
-   * @abstract
-   * @override
-   * @param {T} arg0
-   * @return {?string}
-   * @public
-   */
-  m_getFoo__java_lang_Object(arg0) {}
 
   /**
    * @return {void}
@@ -82,8 +65,7 @@ class AbstractListCollection extends j_l_Object {
 
 $Util.$setClassMetadata(
     AbstractListCollection,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.multipleabstractparents.MultipleAbstractParents$AbstractListCollection'));
+    'com.google.j2cl.transpiler.readable.multipleabstractparents.MultipleAbstractParents$AbstractListCollection');
 
 
 List.$markImplementor(AbstractListCollection);

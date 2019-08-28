@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.lambdas.Lambdas$JsSupplier.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.lambdas.Lambdas.JsSupplier$impl');
 
 
@@ -97,8 +89,7 @@ class JsSupplier {
 
 $Util.$setClassMetadataForInterface(
     JsSupplier,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.lambdas.Lambdas$JsSupplier'));
+    'com.google.j2cl.transpiler.readable.lambdas.Lambdas$JsSupplier');
 
 
 JsSupplier.$markImplementor(/** @type {Function} */ (JsSupplier));

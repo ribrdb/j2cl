@@ -207,7 +207,6 @@ When using `java.util.logging.Logger`, you may specify a logging level. You can
 disable these logging statements (and have them dead-code stripped) in
 production JavaScript code.
 
-
 ### Custom Compile-Time Code Stripping
 
 You can implement your own configuration based stripping with
@@ -240,10 +239,8 @@ you may want to be more conservative in pulling in non-critical J2CL
 dependencies than in regular Java projects. Remember that you are writing code
 that runs in a web browser!
 
-Additionally, APT based code generation such as
-[Dagger](https://google.github.io/dagger/) or
+Additionally, APT based code generation such as [Dagger](https://dagger.dev/) or
 [AutoValue](https://github.com/google/auto/tree/master/value) can have
 surprising impact on compile time and code size if used without awareness of the
 implications. Generated code is rarely inspected which can lead to hidden code
 verbosity. These APTs are designed for convenience, without code size in mind.
-

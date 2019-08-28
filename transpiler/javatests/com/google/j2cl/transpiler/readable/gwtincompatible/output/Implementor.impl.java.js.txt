@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.gwtincompatible.Implementor.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.gwtincompatible.Implementor$impl');
 
 
@@ -91,8 +83,7 @@ class Implementor extends ClassWithAbstractMethod {
 
 $Util.$setClassMetadata(
     Implementor,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.gwtincompatible.Implementor'));
+    'com.google.j2cl.transpiler.readable.gwtincompatible.Implementor');
 
 
 Interface.$markImplementor(Implementor);

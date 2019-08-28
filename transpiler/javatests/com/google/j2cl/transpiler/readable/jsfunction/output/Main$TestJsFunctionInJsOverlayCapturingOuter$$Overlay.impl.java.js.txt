@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.jsfunction.Main$TestJsFunctionInJsOverlayCapturingOuter$$Overlay.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.jsfunction.Main.TestJsFunctionInJsOverlayCapturingOuter.$Overlay$impl');
 
 
@@ -16,7 +8,7 @@ let $Equality = goog.forwardDeclare('nativebootstrap.Equality$impl');
 
 class $Overlay {
   /**
-   * @param {Array} $thisArg
+   * @param {!Array} $thisArg
    * @return {void}
    * @public
    */

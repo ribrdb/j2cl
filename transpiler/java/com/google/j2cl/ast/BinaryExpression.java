@@ -19,6 +19,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.j2cl.ast.annotations.Visitable;
+import com.google.j2cl.ast.processors.common.Processor;
 
 /**
  * Binary operator expression.
@@ -94,6 +95,18 @@ public class BinaryExpression extends Expression {
   @Override
   public boolean isIdempotent() {
     return !operator.hasSideEffect() && leftOperand.isIdempotent() && rightOperand.isIdempotent();
+  }
+
+  @Override
+  public boolean isCompileTimeConstant() {
+    return !operator.hasSideEffect()
+        && leftOperand.isCompileTimeConstant()
+        && rightOperand.isCompileTimeConstant();
+  }
+
+  @Override
+  public boolean isNonNullString() {
+    return AstUtils.matchesStringContext(this);
   }
 
   @Override

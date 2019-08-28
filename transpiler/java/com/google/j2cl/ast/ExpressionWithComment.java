@@ -18,6 +18,7 @@ package com.google.j2cl.ast;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.j2cl.ast.annotations.Visitable;
+import com.google.j2cl.ast.processors.common.Processor;
 
 /** A node that represent an expression that will be emitted with an explaining comment. */
 @Visitable
@@ -41,6 +42,16 @@ public class ExpressionWithComment extends Expression {
   @Override
   public TypeDescriptor getTypeDescriptor() {
     return expression.getTypeDescriptor();
+  }
+
+  @Override
+  public boolean isEffectivelyInvariant() {
+    return expression.isEffectivelyInvariant();
+  }
+
+  @Override
+  public boolean isCompileTimeConstant() {
+    return expression.isCompileTimeConstant();
   }
 
   @Override

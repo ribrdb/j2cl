@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.interfaces.Main$Interface.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.interfaces.Main.Interface$impl');
 
 
@@ -55,7 +47,7 @@ class Interface {
 
   /**
    * @template T
-   * @param {Interface<T>} $thisArg
+   * @param {!Interface<T>} $thisArg
    * @param {T} t
    * @return {void}
    * @public
@@ -70,7 +62,7 @@ class Interface {
 
   /**
    * @template T
-   * @param {Interface<T>} $thisArg
+   * @param {!Interface<T>} $thisArg
    * @param {T} t
    * @return {void}
    * @public
@@ -134,9 +126,7 @@ class Interface {
 };
 
 $Util.$setClassMetadataForInterface(
-    Interface,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.interfaces.Main$Interface'));
+    Interface, 'com.google.j2cl.transpiler.readable.interfaces.Main$Interface');
 
 
 /** @public {number} @const */

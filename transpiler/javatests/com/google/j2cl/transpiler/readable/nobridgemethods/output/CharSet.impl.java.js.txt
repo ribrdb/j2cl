@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.nobridgemethods.CharSet.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.nobridgemethods.CharSet$impl');
 
 
@@ -91,9 +83,7 @@ class CharSet extends j_l_Object {
 };
 
 $Util.$setClassMetadata(
-    CharSet,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.nobridgemethods.CharSet'));
+    CharSet, 'com.google.j2cl.transpiler.readable.nobridgemethods.CharSet');
 
 
 

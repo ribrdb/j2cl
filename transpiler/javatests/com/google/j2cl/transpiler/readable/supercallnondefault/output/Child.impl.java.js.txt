@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.supercallnondefault.Child.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.supercallnondefault.Child$impl');
 
 
@@ -80,9 +72,7 @@ class Child extends Parent {
 };
 
 $Util.$setClassMetadata(
-    Child,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.supercallnondefault.Child'));
+    Child, 'com.google.j2cl.transpiler.readable.supercallnondefault.Child');
 
 
 

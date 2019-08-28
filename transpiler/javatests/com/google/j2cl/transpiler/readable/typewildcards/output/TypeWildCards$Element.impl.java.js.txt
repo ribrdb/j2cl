@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.typewildcards.TypeWildCards$Element.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.typewildcards.TypeWildCards.Element$impl');
 
 
@@ -15,7 +7,6 @@ const j_l_Object = goog.require('java.lang.Object$impl');
 const $Util = goog.require('nativebootstrap.Util$impl');
 
 let TypeWildCards = goog.forwardDeclare('com.google.j2cl.transpiler.readable.typewildcards.TypeWildCards$impl');
-let Integer = goog.forwardDeclare('java.lang.Integer$impl');
 
 
 /**
@@ -44,22 +35,6 @@ class Element extends j_l_Object {
         $outer_this;
     this.$ctor__java_lang_Object__();
   }
-
-  /**
-   * @abstract
-   * @override
-   * @return {Integer}
-   * @public
-   */
-  m_get__() {}
-
-  /**
-   * @abstract
-   * @override
-   * @return {?string}
-   * @public
-   */
-  m_getKey__() {}
 
   /**
    * @return {void}
@@ -97,8 +72,7 @@ class Element extends j_l_Object {
 
 $Util.$setClassMetadata(
     Element,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.typewildcards.TypeWildCards$Element'));
+    'com.google.j2cl.transpiler.readable.typewildcards.TypeWildCards$Element');
 
 
 HasKey.$markImplementor(Element);

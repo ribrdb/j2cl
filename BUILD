@@ -3,9 +3,10 @@
 
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_library")
 
-package(default_visibility = ["//visibility:public"])
-
-licenses(["notice"])  # Apache 2.0
+package(
+    default_visibility = ["//visibility:public"],
+    licenses = ["notice"],  # Apache 2.0
+)
 
 exports_files(["LICENSE"])
 
@@ -32,6 +33,18 @@ alias(
 alias(
     name = "junit",
     actual = "//junit/emul/java:junit_emul",
+)
+
+# JUnit async runner (EXPERIMENTAL)
+
+alias(
+    name = "junit_async_runner",
+    actual = "//junit/generator/java/com/google/j2cl/junit/async",
+)
+
+alias(
+    name = "junit_async_runner-j2cl",
+    actual = "//junit/generator/java/com/google/j2cl/junit/async:async-j2cl",
 )
 
 # Optional minifier library for development servers

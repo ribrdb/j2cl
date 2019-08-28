@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.intersectiontype.Cmp.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.intersectiontype.Cmp$impl');
 
 
@@ -89,9 +81,7 @@ class Cmp {
 };
 
 $Util.$setClassMetadataForInterface(
-    Cmp,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.intersectiontype.Cmp'));
+    Cmp, 'com.google.j2cl.transpiler.readable.intersectiontype.Cmp');
 
 
 Cmp.$markImplementor(/** @type {Function} */ (Cmp));

@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.multipletopclasses.MultipleTopClasses.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.multipletopclasses.MultipleTopClasses$impl');
 
 
@@ -77,8 +69,7 @@ class MultipleTopClasses extends AnotherClass {
 
 $Util.$setClassMetadata(
     MultipleTopClasses,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.multipletopclasses.MultipleTopClasses'));
+    'com.google.j2cl.transpiler.readable.multipletopclasses.MultipleTopClasses');
 
 
 

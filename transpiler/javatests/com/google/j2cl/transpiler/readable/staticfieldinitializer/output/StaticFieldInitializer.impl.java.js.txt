@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.staticfieldinitializer.StaticFieldInitializer.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.staticfieldinitializer.StaticFieldInitializer$impl');
 
 
@@ -133,8 +125,7 @@ class StaticFieldInitializer extends j_l_Object {
 
 $Util.$setClassMetadata(
     StaticFieldInitializer,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.staticfieldinitializer.StaticFieldInitializer'));
+    'com.google.j2cl.transpiler.readable.staticfieldinitializer.StaticFieldInitializer');
 
 
 /** @private {number} */

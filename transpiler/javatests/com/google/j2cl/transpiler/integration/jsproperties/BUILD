@@ -1,4 +1,6 @@
-licenses(["notice"])  # Apache 2.0
+package(
+    licenses = ["notice"],  # Apache 2.0
+)
 
 load(
     "//transpiler/javatests/com/google/j2cl/transpiler/integration:integration_test.bzl",
@@ -11,7 +13,9 @@ load(
 # blaze test :uncompiled_test
 integration_test(
     name = "jsproperties",
-    srcs = glob(["*.java"]),
-    native_srcs = glob(["*.native.js"]),
+    srcs = glob([
+        "*.java",
+        "*.js",
+    ]),
     deps = ["//third_party:gwt-jsinterop-annotations-j2cl"],
 )

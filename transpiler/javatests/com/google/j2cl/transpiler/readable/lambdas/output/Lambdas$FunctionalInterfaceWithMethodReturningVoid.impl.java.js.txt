@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.lambdas.Lambdas$FunctionalInterfaceWithMethodReturningVoid.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.lambdas.Lambdas.FunctionalInterfaceWithMethodReturningVoid$impl');
 
 
@@ -90,8 +82,7 @@ class FunctionalInterfaceWithMethodReturningVoid {
 
 $Util.$setClassMetadataForInterface(
     FunctionalInterfaceWithMethodReturningVoid,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.lambdas.Lambdas$FunctionalInterfaceWithMethodReturningVoid'));
+    'com.google.j2cl.transpiler.readable.lambdas.Lambdas$FunctionalInterfaceWithMethodReturningVoid');
 
 
 FunctionalInterfaceWithMethodReturningVoid.$markImplementor(

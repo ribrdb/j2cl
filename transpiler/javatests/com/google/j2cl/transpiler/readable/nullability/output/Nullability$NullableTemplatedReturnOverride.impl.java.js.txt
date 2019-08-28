@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.nullability.Nullability$NullableTemplatedReturnOverride.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.nullability.Nullability.NullableTemplatedReturnOverride$impl');
 
 
@@ -91,8 +83,7 @@ class NullableTemplatedReturnOverride extends j_l_Object {
 
 $Util.$setClassMetadata(
     NullableTemplatedReturnOverride,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.nullability.Nullability$NullableTemplatedReturnOverride'));
+    'com.google.j2cl.transpiler.readable.nullability.Nullability$NullableTemplatedReturnOverride');
 
 
 NullableTemplatedReturn.$markImplementor(NullableTemplatedReturnOverride);

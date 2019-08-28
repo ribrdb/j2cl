@@ -657,8 +657,7 @@ public class Java8Test {
   public void testAbstractClassImplementsInterface() {
     Child1 child1 = new Child1();
     Child2 child2 = new Child2();
-    // TODO(b/36779140): Uncomment when bug is fixed.
-    //assertThat((Object) child1.foo()).isEqualTo("interface.foo child1.foo");
+    assertThat((Object) child1.foo()).isEqualTo("interface.foo child1.foo");
     assertThat((Object) child2.foo()).isEqualTo("interface.foo");
   }
 
@@ -1768,10 +1767,10 @@ public class Java8Test {
   @Test
   public void testJsVarargsLambda() {
     VarargsFunction function = (i, args) -> args[i];
-    assertThat((Object) function.f(1, "a", "b", "c")).isSameAs("b");
-    assertThat((Object) callFromJSNI(function)).isSameAs("c");
+    assertThat((Object) function.f(1, "a", "b", "c")).isSameInstanceAs("b");
+    assertThat((Object) callFromJSNI(function)).isSameInstanceAs("c");
     String[] pars = new String[] {"a", "b", "c"};
-    assertThat((Object) function.f(0, pars)).isSameAs("a");
+    assertThat((Object) function.f(0, pars)).isSameInstanceAs("a");
   }
 
   private static <T> T m(T s) {
@@ -1963,7 +1962,7 @@ public class Java8Test {
 
   @Test
   public void testNativeJsOverlay_lambda() {
-    assertThat((Object) NativeClassWithJsOverlay.m("Hello")).isSameAs("Hello");
+    assertThat((Object) NativeClassWithJsOverlay.m("Hello")).isSameInstanceAs("Hello");
   }
 
   interface IntefaceWithDefaultMethodAndLambda {

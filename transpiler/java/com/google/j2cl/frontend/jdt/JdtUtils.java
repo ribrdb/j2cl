@@ -61,7 +61,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.function.Supplier;
 import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -74,8 +73,6 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
-import org.eclipse.jdt.core.dom.Name;
-import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 
@@ -140,7 +137,7 @@ class JdtUtils {
             ? createTypeDescriptorWithNullability(
                 variableBinding.getType(), variableBinding.getAnnotations())
             : createTypeDescriptor(variableBinding.getType());
-    boolean isFinal = isFinal(variableBinding);
+    boolean isFinal = variableBinding.isEffectivelyFinal();
     boolean isParameter = variableBinding.isParameter();
     boolean isUnusableByJsSuppressed =
         JsInteropAnnotationUtils.isUnusableByJsSuppressed(variableBinding);
@@ -734,7 +731,7 @@ class JdtUtils {
         .setReturnTypeDescriptor(returnTypeDescriptor)
         .setTypeParameterTypeDescriptors(typeParameterTypeDescriptors)
         .setJsInfo(jsInfo)
-        .setJsFunction(JsInteropUtils.isOrOverridesJsFunctionMethod(methodBinding))
+        .setJsFunction(isOrOverridesJsFunctionMethod(methodBinding))
         .setVisibility(visibility)
         .setStatic(isStatic)
         .setConstructor(isConstructor)
@@ -750,47 +747,72 @@ class JdtUtils {
         .build();
   }
 
+  private static boolean isOrOverridesJsFunctionMethod(IMethodBinding methodBinding) {
+    ITypeBinding declaringType = methodBinding.getDeclaringClass();
+    if (JsInteropUtils.isJsFunction(declaringType)
+        && declaringType.getFunctionalInterfaceMethod() != null
+        && methodBinding.getMethodDeclaration()
+            == declaringType.getFunctionalInterfaceMethod().getMethodDeclaration()) {
+      return true;
+    }
+    for (IMethodBinding overriddenMethodBinding : getOverriddenMethods(methodBinding)) {
+      if (isOrOverridesJsFunctionMethod(overriddenMethodBinding)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /** Checks overriding chain to compute JsInfo. */
   private static JsInfo computeJsInfo(IMethodBinding methodBinding) {
     JsInfo originalJsInfo = JsInteropUtils.getJsInfo(methodBinding);
-    if (originalJsInfo.isJsOverlay()) {
+
+    if (originalJsInfo.isJsOverlay()
+        || originalJsInfo.getJsName() != null
+        || originalJsInfo.getJsNamespace() != null) {
+      // Do not examine overridden methods if the method is marked as JsOverlay or it has a JsMember
+      // annotation that customizes the name.
       return originalJsInfo;
     }
 
-    List<JsInfo> inheritedJsInfoList = new ArrayList<>();
-
-    // Add the JsInfo of the method and all the overridden methods to the list.
-    if (originalJsInfo.getJsMemberType() != JsMemberType.NONE) {
-      inheritedJsInfoList.add(originalJsInfo);
-    }
+    boolean hasExplicitJsMemberAnnotation = hasJsMemberAnnotation(methodBinding);
+    JsInfo defaultJsInfo = originalJsInfo;
     for (IMethodBinding overriddenMethod : getOverriddenMethods(methodBinding)) {
       JsInfo inheritedJsInfo = JsInteropUtils.getJsInfo(overriddenMethod);
-      if (inheritedJsInfo.getJsMemberType() != JsMemberType.NONE) {
-        inheritedJsInfoList.add(inheritedJsInfo);
+      if (inheritedJsInfo.getJsMemberType() == JsMemberType.NONE) {
+        continue;
       }
-    }
 
-    if (inheritedJsInfoList.isEmpty()) {
-      return originalJsInfo;
-    }
+      if (hasExplicitJsMemberAnnotation
+          && originalJsInfo.getJsMemberType() != inheritedJsInfo.getJsMemberType()) {
+        // Only inherit from the overridden method if the JsMember types are consistent.
+        continue;
+      }
 
-    // TODO(b/67778330): Make the handling of @JsProperty consistent with the handling of @JsMethod.
-    if (inheritedJsInfoList.get(0).getJsMemberType() == JsMemberType.METHOD) {
-      // Return the first JsInfo with a Js name specified.
-      for (JsInfo inheritedJsInfo : inheritedJsInfoList) {
-        if (inheritedJsInfo.getJsName() != null) {
-          // Don't inherit @JsAsync annotation from overridden methods.
-          return JsInfo.Builder.from(inheritedJsInfo)
-              .setJsAsync(originalJsInfo.isJsAsync())
-              .build();
-        }
+      if (inheritedJsInfo.getJsName() != null) {
+        // Found an overridden method of the same JsMember type one that customizes the name, done.
+        // If there are any conflicts with other overrides they will be reported by
+        // JsInteropRestrictionsChecker.
+        return JsInfo.Builder.from(inheritedJsInfo).setJsAsync(originalJsInfo.isJsAsync()).build();
+      }
+
+      if (defaultJsInfo == originalJsInfo && !hasExplicitJsMemberAnnotation) {
+        // The original method does not have a JsMember annotation and traversing the list of
+        // overridden methods we found the first that has an explicit JsMember annotation.
+        // Keep it as the one to be used if none is found that customizes the name.
+        // This allows to "inherit" the JsMember type from the override.
+        defaultJsInfo = inheritedJsInfo;
       }
     }
 
     // Don't inherit @JsAsync annotation from overridden methods.
-    return JsInfo.Builder.from(inheritedJsInfoList.get(0))
-        .setJsAsync(originalJsInfo.isJsAsync())
-        .build();
+    return JsInfo.Builder.from(defaultJsInfo).setJsAsync(originalJsInfo.isJsAsync()).build();
+  }
+
+  private static boolean hasJsMemberAnnotation(IMethodBinding methodBinding) {
+    return JsInteropAnnotationUtils.getJsMethodAnnotation(methodBinding) != null
+        || JsInteropAnnotationUtils.getJsPropertyAnnotation(methodBinding) != null
+        || JsInteropAnnotationUtils.getJsConstructorAnnotation(methodBinding) != null;
   }
 
   public static Set<IMethodBinding> getOverriddenMethods(IMethodBinding methodBinding) {
@@ -1039,36 +1061,6 @@ class JdtUtils {
           getBinaryNameFromTypeBinding(toTopLevelTypeBinding(typeBinding)));
     }
     return null;
-  }
-
-  /**
-   * Returns true for the cases where the qualifier an expression that has always the same value and
-   * will not trigger class initializers.
-   */
-  public static boolean isEffectivelyConstant(org.eclipse.jdt.core.dom.Expression expression) {
-    switch (expression.getNodeType()) {
-      case ASTNode.PARENTHESIZED_EXPRESSION:
-        return isEffectivelyConstant(((ParenthesizedExpression) expression).getExpression());
-      case ASTNode.SIMPLE_NAME:
-      case ASTNode.QUALIFIED_NAME:
-        IBinding binding = ((Name) expression).resolveBinding();
-        if (binding instanceof IVariableBinding) {
-          IVariableBinding variableBinding = (IVariableBinding) binding;
-          return !variableBinding.isField() && variableBinding.isEffectivelyFinal();
-        }
-        // Type expressions are always effectively constant.
-        return binding instanceof ITypeBinding;
-      case ASTNode.THIS_EXPRESSION:
-      case ASTNode.BOOLEAN_LITERAL:
-      case ASTNode.CHARACTER_LITERAL:
-      case ASTNode.NULL_LITERAL:
-      case ASTNode.NUMBER_LITERAL:
-      case ASTNode.STRING_LITERAL:
-      case ASTNode.TYPE_LITERAL:
-        return true;
-      default:
-        return false;
-    }
   }
 
   public static TypeDeclaration createDeclarationForType(final ITypeBinding typeBinding) {

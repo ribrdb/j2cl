@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.typewildcards.TypeWildCards$X.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.typewildcards.TypeWildCards.X$impl');
 
 
@@ -89,9 +81,7 @@ class X {
 };
 
 $Util.$setClassMetadataForInterface(
-    X,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.typewildcards.TypeWildCards$X'));
+    X, 'com.google.j2cl.transpiler.readable.typewildcards.TypeWildCards$X');
 
 
 X.$markImplementor(/** @type {Function} */ (X));

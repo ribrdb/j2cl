@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.interfaces.Main$SubInterface.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.interfaces.Main.SubInterface$impl');
 
 
@@ -39,7 +31,7 @@ class SubInterface {
   }
 
   /**
-   * @param {SubInterface} $thisArg
+   * @param {!SubInterface} $thisArg
    * @param {?string} s
    * @return {void}
    * @public
@@ -109,8 +101,7 @@ class SubInterface {
 
 $Util.$setClassMetadataForInterface(
     SubInterface,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.interfaces.Main$SubInterface'));
+    'com.google.j2cl.transpiler.readable.interfaces.Main$SubInterface');
 
 
 SubInterface.$markImplementor(/** @type {Function} */ (SubInterface));

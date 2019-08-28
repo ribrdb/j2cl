@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.simplebridgemethods.AnotherTask.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.simplebridgemethods.AnotherTask$impl');
 
 
@@ -111,8 +103,7 @@ class AnotherTask extends j_l_Object {
 
 $Util.$setClassMetadata(
     AnotherTask,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.simplebridgemethods.AnotherTask'));
+    'com.google.j2cl.transpiler.readable.simplebridgemethods.AnotherTask');
 
 
 Callable.$markImplementor(AnotherTask);

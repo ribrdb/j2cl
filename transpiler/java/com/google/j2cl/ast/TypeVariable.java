@@ -19,9 +19,9 @@ import com.google.auto.value.AutoValue;
 import com.google.auto.value.extension.memoized.Memoized;
 import com.google.common.collect.ImmutableSet;
 import com.google.j2cl.ast.annotations.Visitable;
+import com.google.j2cl.ast.processors.common.Processor;
 import com.google.j2cl.common.ThreadLocalInterner;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -134,10 +134,6 @@ public abstract class TypeVariable extends TypeDescriptor implements HasName {
     return getName();
   }
 
-  public String getSourceName() {
-    return getName();
-  }
-
   @Override
   public String getUniqueId() {
     String prefix = isNullable() ? "?" : "!";
@@ -180,15 +176,6 @@ public abstract class TypeVariable extends TypeDescriptor implements HasName {
     public abstract Builder setName(String name);
 
     public abstract Builder setWildcardOrCapture(boolean isWildcardOrCapture);
-
-    // Internal builder accessors to compute default values.
-    abstract boolean isWildcardOrCapture();
-
-    abstract Optional<String> getUniqueKey();
-
-    abstract Supplier<TypeDescriptor> getBoundTypeDescriptorSupplier();
-
-    abstract Optional<String> getName();
 
     private static final ThreadLocalInterner<TypeVariable> interner = new ThreadLocalInterner<>();
 

@@ -16,8 +16,10 @@
 package com.google.j2cl.ast;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import com.google.j2cl.ast.annotations.Visitable;
+import com.google.j2cl.ast.processors.common.Processor;
 import com.google.j2cl.common.SourcePosition;
 import java.util.Optional;
 
@@ -68,6 +70,27 @@ public class FieldAccess extends Expression implements MemberReference {
   @Override
   public boolean isIdempotent() {
     return getQualifier() == null || getQualifier().isIdempotent();
+  }
+
+  @Override
+  public boolean isEffectivelyInvariant() {
+    // Only captured fields are considered invariant.
+
+    // While it seems logical to consider access to final fields to be invariant, that is not the
+    // case in general. Access to final static fields has side effects due to the triggering of the
+    // class initializer. Even access to final instance fields can not be considered invariant
+    // since they can be observed in their uninitialized state.
+
+    checkState(!getTarget().isCapture() || getQualifier().isEffectivelyInvariant());
+    return getTarget().isCapture();
+  }
+
+  @Override
+  public boolean hasSideEffects() {
+    // Access to captures does not have side effects, all others might.
+    // Access to instance fields might trigger an NPE and access to static fields might trigger
+    // class initialization.
+    return !getTarget().isCapture();
   }
 
   @Override

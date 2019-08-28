@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.bridgemethoddefault.II.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.bridgemethoddefault.II$impl');
 
 
@@ -27,7 +19,7 @@ class II {
   m_m__java_lang_String(s) {}
 
   /**
-   * @param {II} $thisArg
+   * @param {!II} $thisArg
    * @param {?string} s
    * @return {void}
    * @public
@@ -89,9 +81,7 @@ class II {
 };
 
 $Util.$setClassMetadataForInterface(
-    II,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.bridgemethoddefault.II'));
+    II, 'com.google.j2cl.transpiler.readable.bridgemethoddefault.II');
 
 
 II.$markImplementor(/** @type {Function} */ (II));

@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.intersectiontype.Serial.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.intersectiontype.Serial$impl');
 
 
@@ -67,9 +59,7 @@ class Serial {
 };
 
 $Util.$setClassMetadataForInterface(
-    Serial,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.intersectiontype.Serial'));
+    Serial, 'com.google.j2cl.transpiler.readable.intersectiontype.Serial');
 
 
 Serial.$markImplementor(/** @type {Function} */ (Serial));

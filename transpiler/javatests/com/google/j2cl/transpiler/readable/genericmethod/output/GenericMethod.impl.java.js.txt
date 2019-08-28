@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.genericmethod.GenericMethod.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.genericmethod.GenericMethod$impl');
 
 
@@ -88,13 +80,11 @@ class GenericMethod extends j_l_Object {
    * @public
    */
   m_fun__java_lang_Error(t) {
-    /**@type {!$1<T_1, T>} */
-    ($1.$create__com_google_j2cl_transpiler_readable_genericmethod_GenericMethod(
-        this));
-    /**@type {!$1LocalClass<T_1, T_1, T>} */
-    ($1LocalClass
-         .$create__com_google_j2cl_transpiler_readable_genericmethod_GenericMethod(
-             this));
+    $1.$create__com_google_j2cl_transpiler_readable_genericmethod_GenericMethod(
+        this);
+    $1LocalClass
+        .$create__com_google_j2cl_transpiler_readable_genericmethod_GenericMethod(
+            this);
   }
 
   /**
@@ -310,8 +300,7 @@ class GenericMethod extends j_l_Object {
 
 $Util.$setClassMetadata(
     GenericMethod,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.genericmethod.GenericMethod'));
+    'com.google.j2cl.transpiler.readable.genericmethod.GenericMethod');
 
 
 

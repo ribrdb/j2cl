@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.bridgejsmethod.Main$O.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.bridgejsmethod.Main.O$impl');
 
 
@@ -66,16 +58,6 @@ class O extends N {
   }
 
   /**
-   * Bridge method for exposing non-JsMethod.
-   * @override
-   * @return {B}
-   * @public
-   */
-  m_getB__() {
-    return this.getB();
-  }
-
-  /**
    * @return {void}
    * @public
    */
@@ -110,9 +92,7 @@ class O extends N {
 };
 
 $Util.$setClassMetadata(
-    O,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.bridgejsmethod.Main$O'));
+    O, 'com.google.j2cl.transpiler.readable.bridgejsmethod.Main$O');
 
 
 

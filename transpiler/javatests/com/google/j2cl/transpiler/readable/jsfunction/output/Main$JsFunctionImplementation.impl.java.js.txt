@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.jsfunction.Main$JsFunctionImplementation.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.jsfunction.Main.JsFunctionImplementation$impl');
 
 
@@ -59,7 +51,7 @@ class JsFunctionImplementation extends j_l_Object {
   }
 
   /**
-   * @param {?function(number):number} $thisArg
+   * @param {function(number):number} $thisArg
    * @return {number}
    * @public
    */
@@ -70,7 +62,7 @@ class JsFunctionImplementation extends j_l_Object {
   }
 
   /**
-   * @param {?function(number):number} $thisArg
+   * @param {function(number):number} $thisArg
    * @return {number}
    * @public
    */
@@ -155,8 +147,7 @@ class JsFunctionImplementation extends j_l_Object {
 
 $Util.$setClassMetadata(
     JsFunctionImplementation,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.jsfunction.Main$JsFunctionImplementation'));
+    'com.google.j2cl.transpiler.readable.jsfunction.Main$JsFunctionImplementation');
 
 
 $JavaScriptFunction.$markImplementor(JsFunctionImplementation);

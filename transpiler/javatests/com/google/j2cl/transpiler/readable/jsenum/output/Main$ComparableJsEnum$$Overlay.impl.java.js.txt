@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.jsenum.Main$ComparableJsEnum$$Overlay.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.jsenum.Main.ComparableJsEnum.$Overlay$impl');
 
 
@@ -17,7 +9,7 @@ let ComparableJsEnum = goog.forwardDeclare('com.google.j2cl.transpiler.readable.
 
 class $Overlay {
   /**
-   * @param {?ComparableJsEnum} $thisArg
+   * @param {ComparableJsEnum} $thisArg
    * @return {number}
    * @public
    */
@@ -53,8 +45,7 @@ class $Overlay {
 
 $Util.$setClassMetadata(
     $Overlay,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.jsenum.Main$ComparableJsEnum'));
+    'com.google.j2cl.transpiler.readable.jsenum.Main$ComparableJsEnum');
 
 
 exports = $Overlay;

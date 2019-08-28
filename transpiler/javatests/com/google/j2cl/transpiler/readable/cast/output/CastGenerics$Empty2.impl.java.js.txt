@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.cast.CastGenerics$Empty2.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.cast.CastGenerics.Empty2$impl');
 
 
@@ -68,9 +60,7 @@ class Empty2 {
 };
 
 $Util.$setClassMetadataForInterface(
-    Empty2,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.cast.CastGenerics$Empty2'));
+    Empty2, 'com.google.j2cl.transpiler.readable.cast.CastGenerics$Empty2');
 
 
 Empty2.$markImplementor(/** @type {Function} */ (Empty2));

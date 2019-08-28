@@ -2,13 +2,12 @@
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_jar")
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_repositories")
-load("@bazel_skylib//:lib/versions.bzl", "versions")
+load("@bazel_skylib//lib:versions.bzl", "versions")
 
 def setup_j2cl_workspace():
     """Load all dependencies needed for J2CL."""
 
     versions.check("0.24.0")  # The version J2CL currently have a CI setup for.
-
 
     closure_repositories(
         omit_com_google_protobuf = True,
@@ -75,6 +74,13 @@ def setup_j2cl_workspace():
     native.maven_jar(
         name = "com_google_truth",
         artifact = "com.google.truth:truth:0.39",
+    )
+
+    # TODO(b/135461024): for now J2CL uses a prepackaged version of javac. But in the future it
+    # might be better to tie in to the Java platform in bazel and control the version there.
+    native.maven_jar(
+        name = "com_sun_tools_javac",
+        artifact = "com.google.errorprone:javac:1.9.0-dev-r2644-1",
     )
 
     # Eclipse JARs listed at
@@ -151,6 +157,7 @@ def setup_j2cl_workspace():
         name = "com_google_protobuf",
         strip_prefix = "protobuf-3.6.1.3",
         urls = ["https://github.com/google/protobuf/archive/v3.6.1.3.zip"],
+        sha256 = "9510dd2afc29e7245e9e884336f848c8a6600a14ae726adb6befdb4f786f0be2",
     )
 
     # needed for protobuf

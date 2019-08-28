@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.bridgejsmethod.Main$D.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.bridgejsmethod.Main.D$impl');
 
 
@@ -108,9 +100,7 @@ class D extends A {
 };
 
 $Util.$setClassMetadata(
-    D,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.bridgejsmethod.Main$D'));
+    D, 'com.google.j2cl.transpiler.readable.bridgejsmethod.Main$D');
 
 
 I.$markImplementor(D);

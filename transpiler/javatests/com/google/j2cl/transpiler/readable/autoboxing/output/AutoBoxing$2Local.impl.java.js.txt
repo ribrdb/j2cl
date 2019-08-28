@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.autoboxing.AutoBoxing$2Local.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.autoboxing.AutoBoxing.$2Local$impl');
 
 
@@ -102,8 +94,7 @@ class $2Local extends j_l_Object {
 
 $Util.$setClassMetadata(
     $2Local,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.autoboxing.AutoBoxing$2Local'));
+    'com.google.j2cl.transpiler.readable.autoboxing.AutoBoxing$2Local');
 
 
 

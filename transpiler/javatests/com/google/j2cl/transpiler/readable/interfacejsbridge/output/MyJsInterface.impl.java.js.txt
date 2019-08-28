@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.interfacejsbridge.MyJsInterface.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.interfacejsbridge.MyJsInterface$impl');
 
 
@@ -91,8 +83,7 @@ class MyJsInterface {
 
 $Util.$setClassMetadataForInterface(
     MyJsInterface,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.interfacejsbridge.MyJsInterface'));
+    'com.google.j2cl.transpiler.readable.interfacejsbridge.MyJsInterface');
 
 
 MyJsInterface.$markImplementor(/** @type {Function} */ (MyJsInterface));

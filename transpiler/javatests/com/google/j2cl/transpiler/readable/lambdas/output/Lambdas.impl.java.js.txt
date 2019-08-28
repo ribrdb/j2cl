@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.lambdas.Lambdas.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.lambdas.Lambdas$impl');
 
 
@@ -256,15 +248,14 @@ class Lambdas extends j_l_Object {
           return i_3;
         })),
         Error.$create__());
-    /**@type {Enum<T>} */
-    (Lambdas
-         .m_callTypeVariableWithBounds__com_google_j2cl_transpiler_readable_lambdas_Lambdas_GenericFunctionalInterface__java_lang_Enum(
-             /**@type {GenericFunctionalInterface<Enum<T>>} */ (
-                 GenericFunctionalInterface.$adapt(((i_4) => {
-                   let i_5 = /**@type {Enum} */ ($Casts.$to(i_4, Enum));
-                   return i_5;
-                 }))),
-             /**@type {Enum<T>} */ (null)));
+    Lambdas
+        .m_callTypeVariableWithBounds__com_google_j2cl_transpiler_readable_lambdas_Lambdas_GenericFunctionalInterface__java_lang_Enum(
+            /**@type {GenericFunctionalInterface<Enum<T>>} */ (
+                GenericFunctionalInterface.$adapt(((i_4) => {
+                  let i_5 = /**@type {Enum} */ ($Casts.$to(i_4, Enum));
+                  return i_5;
+                }))),
+            /**@type {Enum<T>} */ (null));
     let f = Lambdas_Function.$adapt(((item) => {
       let item_1 = /**@type {Enum} */ ($Casts.$to(item, Enum));
       return Long.m_valueOf__long($Long.fromInt(1));
@@ -451,9 +442,7 @@ class Lambdas extends j_l_Object {
 };
 
 $Util.$setClassMetadata(
-    Lambdas,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.lambdas.Lambdas'));
+    Lambdas, 'com.google.j2cl.transpiler.readable.lambdas.Lambdas');
 
 
 /** @private {?function(*):*} */

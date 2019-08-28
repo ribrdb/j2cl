@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.methodreferences.MethodReferences$ArrayProducer.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.methodreferences.MethodReferences.ArrayProducer$impl');
 
 
@@ -93,8 +85,7 @@ class ArrayProducer {
 
 $Util.$setClassMetadataForInterface(
     ArrayProducer,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.methodreferences.MethodReferences$ArrayProducer'));
+    'com.google.j2cl.transpiler.readable.methodreferences.MethodReferences$ArrayProducer');
 
 
 ArrayProducer.$markImplementor(/** @type {Function} */ (ArrayProducer));

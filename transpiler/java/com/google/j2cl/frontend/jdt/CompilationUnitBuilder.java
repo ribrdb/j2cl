@@ -25,10 +25,7 @@ import static java.util.stream.Collectors.toList;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
 import com.google.j2cl.ast.ArrayAccess;
 import com.google.j2cl.ast.ArrayLength;
 import com.google.j2cl.ast.ArrayLiteral;
@@ -57,13 +54,11 @@ import com.google.j2cl.ast.ForStatement;
 import com.google.j2cl.ast.FunctionExpression;
 import com.google.j2cl.ast.IfStatement;
 import com.google.j2cl.ast.InstanceOfExpression;
-import com.google.j2cl.ast.JavaScriptConstructorReference;
 import com.google.j2cl.ast.JsDocCastExpression;
 import com.google.j2cl.ast.LabeledStatement;
 import com.google.j2cl.ast.Method;
 import com.google.j2cl.ast.MethodCall;
 import com.google.j2cl.ast.MethodDescriptor;
-import com.google.j2cl.ast.MultiExpression;
 import com.google.j2cl.ast.NewArray;
 import com.google.j2cl.ast.NewInstance;
 import com.google.j2cl.ast.NullLiteral;
@@ -96,8 +91,8 @@ import com.google.j2cl.ast.Visibility;
 import com.google.j2cl.ast.WhileStatement;
 import com.google.j2cl.common.FilePosition;
 import com.google.j2cl.common.SourcePosition;
+import com.google.j2cl.frontend.common.AbstractCompilationUnitBuilder;
 import com.google.j2cl.frontend.common.EnumMethodsCreator;
-import com.google.j2cl.frontend.common.PackageInfoCache;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -133,29 +128,11 @@ import org.eclipse.jdt.core.dom.TypeMethodReference;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 
 /** Creates a J2CL Java AST from the AST provided by JDT. */
-public class CompilationUnitBuilder {
+public class CompilationUnitBuilder extends AbstractCompilationUnitBuilder {
+
   private class ASTConverter {
-    private PackageInfoCache packageInfoCache = PackageInfoCache.get();
-    private Map<IVariableBinding, Variable> variableByJdtBinding = new HashMap<>();
-    private Map<Variable, Type> enclosingTypeByVariable = new HashMap<>();
-    private Multimap<String, Variable> capturesByTypeName = LinkedHashMultimap.create();
-    private List<Type> typeStack = new ArrayList<>();
-    private Type currentType = null;
-
-    private String currentSourceFile;
     private org.eclipse.jdt.core.dom.CompilationUnit jdtCompilationUnit;
-    private CompilationUnit j2clCompilationUnit;
-    private int qualifierCounter;
-
-    private void pushType(Type type) {
-      typeStack.add(type);
-      currentType = type;
-    }
-
-    private void popType() {
-      typeStack.remove(typeStack.size() - 1);
-      currentType = typeStack.isEmpty() ? null : typeStack.get(typeStack.size() - 1);
-    }
+    private Map<IVariableBinding, Variable> variableByJdtBinding = new HashMap<>();
 
     @SuppressWarnings({"cast", "unchecked"})
     private CompilationUnit convert(
@@ -165,22 +142,20 @@ public class CompilationUnitBuilder {
       JdtUtils.initWellKnownTypes(jdtCompilationUnit.getAST(), wellKnownTypeBindings);
       this.jdtCompilationUnit = jdtCompilationUnit;
 
-      currentSourceFile = sourceFilePath;
+      setCurrentSourceFile(sourceFilePath);
       String packageName = JdtUtils.getCompilationUnitPackageName(jdtCompilationUnit);
-      j2clCompilationUnit = new CompilationUnit(sourceFilePath, packageName);
+      setCurrentCompilationUnit(new CompilationUnit(sourceFilePath, packageName));
       // Records information about package-info files supplied as source code.
-      if (currentSourceFile.endsWith("package-info.java")
+      if (getCurrentSourceFile().endsWith("package-info.java")
           && jdtCompilationUnit.getPackage() != null) {
-        String packageJsNamespace = getPackageJsNamespace(jdtCompilationUnit);
-        packageInfoCache.setPackageJsNamespace(
-            PackageInfoCache.SOURCE_CLASS_PATH_ENTRY, packageName, packageJsNamespace);
+        setPackageJsNamespaceFromSource(packageName, getPackageJsNamespace(jdtCompilationUnit));
       }
       for (Object object : jdtCompilationUnit.types()) {
         AbstractTypeDeclaration abstractTypeDeclaration = (AbstractTypeDeclaration) object;
         convert(abstractTypeDeclaration);
       }
 
-      return j2clCompilationUnit;
+      return getCurrentCompilationUnit();
     }
 
     private String getPackageJsNamespace(
@@ -209,11 +184,9 @@ public class CompilationUnitBuilder {
           convert((EnumDeclaration) typeDeclaration);
           break;
         default:
-          throw new RuntimeException(
-              "Need to implement translation for AbstractTypeDeclaration type: "
-                  + typeDeclaration.getClass().getName()
-                  + " file triggering this: "
-                  + currentSourceFile);
+          throw internalCompilerError(
+              "Unexpected node type for AbstractTypeDeclaration: %s  type name: %s ",
+              typeDeclaration.getClass().getName(), typeDeclaration.getName().toString());
       }
     }
 
@@ -260,7 +233,7 @@ public class CompilationUnitBuilder {
         Function<Type, T> typeProcessor) {
       Type type = createType(typeBinding, sourcePositionNode);
       pushType(type);
-      j2clCompilationUnit.addType(type);
+      getCurrentCompilationUnit().addType(type);
       convertTypeBody(type, bodyDeclarations);
       T result = typeProcessor.apply(type);
       popType();
@@ -269,11 +242,7 @@ public class CompilationUnitBuilder {
 
     private void convertTypeBody(Type type, List<BodyDeclaration> bodyDeclarations) {
       TypeDeclaration currentTypeDeclaration = type.getDeclaration();
-      if (type.getSuperTypeDescriptor() != null) {
-        capturesByTypeName.putAll(
-            currentTypeDeclaration.getQualifiedSourceName(),
-            capturesByTypeName.get(type.getSuperTypeDescriptor().getQualifiedSourceName()));
-      }
+      propagateCapturesFromSupertype(currentTypeDeclaration);
       for (BodyDeclaration bodyDeclaration : bodyDeclarations) {
         if (bodyDeclaration instanceof FieldDeclaration) {
           FieldDeclaration fieldDeclaration = (FieldDeclaration) bodyDeclaration;
@@ -298,16 +267,13 @@ public class CompilationUnitBuilder {
           AbstractTypeDeclaration nestedTypeDeclaration = (AbstractTypeDeclaration) bodyDeclaration;
           convert(nestedTypeDeclaration);
         } else {
-          throw new RuntimeException(
-              "Need to implement translation for BodyDeclaration type: "
-                  + bodyDeclaration.getClass().getName()
-                  + " file triggering this: "
-                  + currentSourceFile);
+          throw internalCompilerError(
+              "Unexpected type for BodyDeclaration: %s, in type: %s",
+              bodyDeclaration.getClass().getName(), type.getDeclaration().getQualifiedSourceName());
         }
       }
 
-      for (Variable capturedVariable :
-          capturesByTypeName.get(currentTypeDeclaration.getQualifiedSourceName())) {
+      for (Variable capturedVariable : getCapturedVariables(currentTypeDeclaration)) {
         FieldDescriptor fieldDescriptor =
             AstUtils.getFieldDescriptorForCapture(type.getTypeDescriptor(), capturedVariable);
         type.addField(
@@ -389,26 +355,6 @@ public class CompilationUnitBuilder {
       return fields;
     }
 
-    private Expression convertConstantToLiteral(
-        Object constantValue, TypeDescriptor typeDescriptor) {
-      if (constantValue instanceof Boolean) {
-        return (boolean) constantValue ? BooleanLiteral.get(true) : BooleanLiteral.get(false);
-      }
-      if (constantValue instanceof Number) {
-        return new NumberLiteral(typeDescriptor.toUnboxedType(), (Number) constantValue);
-      }
-      if (constantValue instanceof Character) {
-        return NumberLiteral.fromChar((Character) constantValue);
-      }
-      if (constantValue instanceof String) {
-        return new StringLiteral((String) constantValue);
-      }
-      throw new RuntimeException(
-          "Need to implement translation for compile time constants of type: "
-              + constantValue.getClass().getSimpleName()
-              + ".");
-    }
-
     private Method convert(MethodDeclaration methodDeclaration) {
       List<Variable> parameters = new ArrayList<>();
       for (SingleVariableDeclaration parameter :
@@ -444,16 +390,6 @@ public class CompilationUnitBuilder {
               .stream()
               .anyMatch(m -> requiresOverrideAnnotation(methodDescriptor, m));
       return Method.newBuilder().setMethodDescriptor(methodDescriptor).setOverride(isOverride);
-    }
-
-    private boolean requiresOverrideAnnotation(
-        MethodDescriptor methodDescriptor, MethodDescriptor overriddenMethodDescriptor) {
-      if (methodDescriptor.isJsMember()) {
-        return overriddenMethodDescriptor.isJsMember()
-            && AstUtils.overrideNeedsAtOverrideAnnotation(overriddenMethodDescriptor);
-      }
-      return methodDescriptor.isJsOverride(overriddenMethodDescriptor)
-          && AstUtils.overrideNeedsAtOverrideAnnotation(overriddenMethodDescriptor);
     }
 
     private ArrayAccess convert(org.eclipse.jdt.core.dom.ArrayAccess expression) {
@@ -607,30 +543,17 @@ public class CompilationUnitBuilder {
           JdtUtils.createMethodDescriptor(constructorBinding);
       DeclaredTypeDescriptor targetTypeDescriptor =
           constructorMethodDescriptor.getEnclosingTypeDescriptor();
+
+      // Instantiation implicitly references all captured variables since in the flat class model
+      // captures become fields and need to be threaded through the constructors.
+      // This is crucial to cover some corner cases where the capture is never referenced in the
+      // class nor its superclasses but is implicitly referenced by invoking a constructor of
+      // the capturing class.
+      propagateAllCapturesOutward(targetTypeDescriptor.getTypeDeclaration());
+
       Expression qualifier = convertOrNull(expression.getExpression());
       checkArgument(!targetTypeDescriptor.getTypeDeclaration().isAnonymous());
-      boolean needsQualifier =
-          targetTypeDescriptor.getTypeDeclaration().isCapturingEnclosingInstance();
-      checkArgument(
-          qualifier == null || needsQualifier,
-          "NewInstance of non nested class should have no qualifier.");
-
-      // Resolve the qualifier of NewInstance that creates an instance of a nested class.
-      // Implicit 'this' doesn't always refer to 'this', it may refer to any enclosing instances.
-      qualifier =
-          needsQualifier && qualifier == null
-              // find the enclosing instance in non-strict mode, which means
-              // for example,
-              // class A {
-              //   class B {}
-              //   class C extends class A {
-              //     // The qualifier of new B() should be C.this, not A.this.
-              //     public void test() { new B(); }
-              //   }
-              // }
-              ? resolveImplicitOuterClassReference(
-                  targetTypeDescriptor.getEnclosingTypeDescriptor())
-              : qualifier;
+      qualifier = resolveInstantiationQualifier(qualifier, targetTypeDescriptor);
 
       return NewInstance.Builder.from(constructorMethodDescriptor)
           .setQualifier(qualifier)
@@ -707,11 +630,8 @@ public class CompilationUnitBuilder {
         case ASTNode.VARIABLE_DECLARATION_EXPRESSION:
           return convert((org.eclipse.jdt.core.dom.VariableDeclarationExpression) expression);
         default:
-          throw new RuntimeException(
-              "Need to implement translation for expression type: "
-                  + expression.getClass().getName()
-                  + " file triggering this: "
-                  + currentSourceFile);
+          throw internalCompilerError(
+              "Unexpected type for Expression: %s", expression.getClass().getName());
       }
     }
 
@@ -787,11 +707,8 @@ public class CompilationUnitBuilder {
         case ASTNode.WHILE_STATEMENT:
           return convert((org.eclipse.jdt.core.dom.WhileStatement) statement);
         default:
-          throw new RuntimeException(
-              "Need to implement translation for statement type: "
-                  + statement.getClass().getName()
-                  + " file triggering this: "
-                  + currentSourceFile);
+          throw internalCompilerError(
+              "Unexpected type for Statement: %s", statement.getClass().getName());
       }
     }
 
@@ -807,7 +724,7 @@ public class CompilationUnitBuilder {
       int endLine = jdtCompilationUnit.getLineNumber(endCharacterPosition) - 1;
       int endColumn = jdtCompilationUnit.getColumnNumber(endCharacterPosition) + 1;
       return SourcePosition.newBuilder()
-          .setFilePath(j2clCompilationUnit.getFilePath())
+          .setFilePath(getCurrentCompilationUnit().getFilePath())
           .setName(name)
           .setStartFilePosition(
               FilePosition.newBuilder()
@@ -1108,55 +1025,28 @@ public class CompilationUnitBuilder {
      * preserving semantics.
      */
     private Expression convert(ExpressionMethodReference expression) {
-      checkNotNull(expression.getExpression());
-      org.eclipse.jdt.core.dom.Expression qualifier = expression.getExpression();
+
+      SourcePosition sourcePosition = getSourcePosition(expression);
       TypeDescriptor expressionTypeDescriptor =
           JdtUtils.createTypeDescriptor(expression.resolveTypeBinding());
-      if (JdtUtils.isEffectivelyConstant(qualifier)) {
-        // There is no need to introduce a temporary variable for the qualifier.
-        return createForwardingFunctionExpression(
-            getSourcePosition(expression),
-            expressionTypeDescriptor,
-            // functional interface method that the expression implements.
-            JdtUtils.createMethodDescriptor(
-                expression.resolveTypeBinding().getFunctionalInterfaceMethod()),
-            convert(qualifier),
-            // target method to forward to.
-            JdtUtils.createMethodDescriptor(expression.resolveMethodBinding()),
-            false);
-      }
-      // The semantics require that the qualifier be evaluated in the context where the method
-      // reference appears, so here we introduce a temporary variable to store the evaluated
-      // qualifier.
-      Variable variable =
-          Variable.newBuilder()
-              .setFinal(true)
-              .setName("$$qualifier" + qualifierCounter++)
-              .setTypeDescriptor(JdtUtils.createTypeDescriptor(qualifier.resolveTypeBinding()))
-              .build();
-      // Store the declaring type in the local scope so that variable declaration scope points to
-      // the right type when the functional expression is effectively constructed.
-      final Type declaringType = currentType;
-      return MultiExpression.newBuilder()
-          .setExpressions(
-              // Declare the temporary variable and initialize to the evaluated qualifier.
-              VariableDeclarationExpression.newBuilder()
-                  .addVariableDeclaration(variable, convert(qualifier))
-                  .build(),
-              // Construct the functional expression.
-              createForwardingFunctionExpression(
-                  getSourcePosition(expression),
-                  expressionTypeDescriptor,
-                  // functional interface method that the expression implements.
-                  JdtUtils.createMethodDescriptor(
-                      expression.resolveTypeBinding().getFunctionalInterfaceMethod()),
-                  declaringType == currentType
-                      ? variable.getReference()
-                      : convertCapturedVariableReference(variable, declaringType.getDeclaration()),
-                  // target method to forward to.
-                  JdtUtils.createMethodDescriptor(expression.resolveMethodBinding()),
-                  false))
-          .build();
+
+      // MethodDescriptor target of the method reference.
+      MethodDescriptor referencedMethodDescriptor =
+          JdtUtils.createMethodDescriptor(expression.resolveMethodBinding());
+
+      // Functional interface method that the expression implements.
+      MethodDescriptor functionalMethodDescriptor =
+          JdtUtils.createMethodDescriptor(
+              expression.resolveTypeBinding().getFunctionalInterfaceMethod());
+
+      Expression qualifier = convert(expression.getExpression());
+
+      return createMethodReferenceLambda(
+          sourcePosition,
+          qualifier,
+          referencedMethodDescriptor,
+          expressionTypeDescriptor,
+          functionalMethodDescriptor);
     }
 
     /**
@@ -1175,90 +1065,24 @@ public class CompilationUnitBuilder {
           JdtUtils.createMethodDescriptor(
               expression.resolveTypeBinding().getFunctionalInterfaceMethod());
 
-      List<Variable> parameters =
-          AstUtils.createParameterVariables(
-              functionalMethodDescriptor.getParameterTypeDescriptors());
-
-      // There are 3 flavors for CreationReferences: 1) unqualified constructors, 2) implicitly
-      // qualified constructors  and 3) array creations.
+      // There are 3 flavors for CreationReferences: 1) array creations, 2) unqualified
+      // constructors, and 3) implicitly qualified constructors.
 
       // If the expression does not resolve, it is an array creation.
+      SourcePosition sourcePosition = getSourcePosition(expression);
       if (expression.resolveMethodBinding() == null) {
-        // convert A[]::new into (size) -> new A[size]
-        ArrayTypeDescriptor arrayType =
-            (ArrayTypeDescriptor) JdtUtils.createTypeDescriptor(expressionTypeBinding);
 
-        checkArgument(arrayType.isArray());
-        // Array creation method references always have exactly one parameter.
-        checkArgument(parameters.size() == 1);
-
-        // The size of the array is the only parameter in the implemented function. It's legal for
-        // the source to provide only one dimension parameter to to create a multidimensional array
-        // but our AST expects NewArray nodes to provide an expression for each dimension in the
-        // array type, hence the missing dimensions are padded with null.
-        ImmutableList<Expression> dimensionExpressions =
-            ImmutableList.<Expression>builder()
-                .add(parameters.get(0).getReference())
-                .addAll(Collections.nCopies(arrayType.getDimensions() - 1, NullLiteral.get()))
-                .build();
-
-        return FunctionExpression.newBuilder()
-            .setTypeDescriptor(functionalMethodDescriptor.getEnclosingTypeDescriptor())
-            .setParameters(parameters)
-            .setStatements(
-                ReturnStatement.newBuilder()
-                    .setExpression(
-                        NewArray.newBuilder()
-                            .setTypeDescriptor(arrayType)
-                            .setDimensionExpressions(dimensionExpressions)
-                            .build())
-                    .setTypeDescriptor(functionalMethodDescriptor.getReturnTypeDescriptor())
-                    .setSourcePosition(getSourcePosition(expression))
-                    .build())
-            .setSourcePosition(getSourcePosition(expression))
-            .build();
+        return createArrayCreationLambda(
+            functionalMethodDescriptor,
+            (ArrayTypeDescriptor) JdtUtils.createTypeDescriptor(expressionTypeBinding),
+            sourcePosition);
       }
 
       MethodDescriptor targetConstructorMethodDescriptor =
           JdtUtils.createMethodDescriptor(expression.resolveMethodBinding());
 
-      // This is a class instantiation.
-      // convert A:new into (par1, ..., parN) -> new A(par1, ..., parN) or
-      // (par1, ..., parN) -> B.this.new A(par1, ..., parN)
-      checkArgument(
-          targetConstructorMethodDescriptor.getParameterTypeDescriptors().size()
-              == parameters.size());
-
-      Expression qualifier =
-          targetConstructorMethodDescriptor
-                  .getEnclosingTypeDescriptor()
-                  .getTypeDeclaration()
-                  .isCapturingEnclosingInstance()
-              // Inner classes may have an implicit enclosing class qualifier (2).
-              ? resolveExplicitOuterClassReference(
-                  JdtUtils.createDeclaredTypeDescriptor(expressionTypeBinding.getDeclaringClass()))
-              : null;
-
-      return FunctionExpression.newBuilder()
-          .setTypeDescriptor(functionalMethodDescriptor.getEnclosingTypeDescriptor())
-          .setParameters(parameters)
-          .setStatements(
-              (Statement)
-                  ReturnStatement.newBuilder()
-                      .setExpression(
-                          NewInstance.Builder.from(targetConstructorMethodDescriptor)
-                              .setQualifier(qualifier)
-                              .setArguments(
-                                  parameters
-                                      .stream()
-                                      .map(Variable::getReference)
-                                      .collect(toImmutableList()))
-                              .build())
-                      .setTypeDescriptor(functionalMethodDescriptor.getReturnTypeDescriptor())
-                      .setSourcePosition(getSourcePosition(expression))
-                      .build())
-          .setSourcePosition(getSourcePosition(expression))
-          .build();
+      return createInstantiationLambda(
+          functionalMethodDescriptor, targetConstructorMethodDescriptor, null, sourcePosition);
     }
 
     /**
@@ -1272,13 +1096,12 @@ public class CompilationUnitBuilder {
      */
     private Expression convert(TypeMethodReference expression) {
       ITypeBinding expressionTypeBinding = expression.resolveTypeBinding();
-      return createForwardingFunctionExpression(
+      return createMethodReferenceLambda(
           getSourcePosition(expression),
-          JdtUtils.createDeclaredTypeDescriptor(expressionTypeBinding),
-          JdtUtils.createMethodDescriptor(expressionTypeBinding.getFunctionalInterfaceMethod()),
           null,
           JdtUtils.createMethodDescriptor(expression.resolveMethodBinding()),
-          false);
+          JdtUtils.createDeclaredTypeDescriptor(expressionTypeBinding),
+          JdtUtils.createMethodDescriptor(expressionTypeBinding.getFunctionalInterfaceMethod()));
     }
 
     /**
@@ -1294,7 +1117,7 @@ public class CompilationUnitBuilder {
       MethodDescriptor methodDescriptor =
           JdtUtils.createMethodDescriptor(expression.resolveMethodBinding());
 
-      return createForwardingFunctionExpression(
+      return AbstractCompilationUnitBuilder.createForwardingFunctionExpression(
           getSourcePosition(expression),
           JdtUtils.createDeclaredTypeDescriptor(expression.resolveTypeBinding()),
           JdtUtils.createMethodDescriptor(
@@ -1302,52 +1125,6 @@ public class CompilationUnitBuilder {
           resolveImplicitOuterClassReference(methodDescriptor.getEnclosingTypeDescriptor()),
           methodDescriptor,
           true);
-    }
-
-    /**
-     * Creates a FunctionExpression described by {@code functionalMethodDescriptor} that forwards to
-     * {@code targetMethodDescriptor}.
-     */
-    private FunctionExpression createForwardingFunctionExpression(
-        SourcePosition sourcePosition,
-        TypeDescriptor expressionTypeDescriptor,
-        MethodDescriptor functionalMethodDescriptor,
-        Expression qualifier,
-        MethodDescriptor targetMethodDescriptor,
-        boolean isStaticDispatch) {
-
-      List<Variable> parameters =
-          AstUtils.createParameterVariables(
-              functionalMethodDescriptor.getParameterTypeDescriptors());
-
-      List<Variable> forwardingParameters = parameters;
-      if (!targetMethodDescriptor.isStatic()
-          && (qualifier == null || qualifier instanceof JavaScriptConstructorReference)) {
-        // The qualifier for the instance method becomes the first parameter. Method references to
-        // instance methods without an explicit qualifier use the first parameter in the functional
-        // interface as the qualifier for the method call.
-        checkArgument(
-            parameters.size() == targetMethodDescriptor.getParameterTypeDescriptors().size() + 1
-                || (parameters.size() >= targetMethodDescriptor.getParameterTypeDescriptors().size()
-                    && targetMethodDescriptor.isVarargs()));
-        qualifier = parameters.get(0).getReference();
-        forwardingParameters = parameters.subList(1, parameters.size());
-      }
-
-      Statement forwardingStatement =
-          AstUtils.createForwardingStatement(
-              sourcePosition,
-              qualifier,
-              targetMethodDescriptor,
-              isStaticDispatch,
-              forwardingParameters,
-              functionalMethodDescriptor.getReturnTypeDescriptor());
-      return FunctionExpression.newBuilder()
-          .setTypeDescriptor(expressionTypeDescriptor)
-          .setParameters(parameters)
-          .setStatements(forwardingStatement)
-          .setSourcePosition(sourcePosition)
-          .build();
     }
 
     private AssertStatement convert(org.eclipse.jdt.core.dom.AssertStatement statement) {
@@ -1501,7 +1278,7 @@ public class CompilationUnitBuilder {
           convertArguments(methodBinding, JdtUtils.asTypedList(expression.arguments()));
       if (expression.getQualifier() == null) {
         return MethodCall.Builder.from(methodDescriptor)
-            .setQualifier(new SuperReference(currentType.getSuperTypeDescriptor()))
+            .setQualifier(new SuperReference(getCurrentType().getSuperTypeDescriptor()))
             .setArguments(arguments)
             .setSourcePosition(getSourcePosition(expression))
             .build();
@@ -1586,7 +1363,7 @@ public class CompilationUnitBuilder {
         IVariableBinding variableBinding = (IVariableBinding) binding;
         checkArgument(
             variableBinding.isField(),
-            "Need to implement translation for QualifiedName that is not a field.");
+            internalCompilerErrorMessage("Unexpected QualifiedName that is not a field"));
 
         Expression qualifier = convert(expression.getQualifier());
         return JdtUtils.createFieldAccess(qualifier, variableBinding);
@@ -1596,8 +1373,8 @@ public class CompilationUnitBuilder {
         return null;
       }
 
-      throw new RuntimeException(
-          "Need to implement translation for QualifiedName that is not a variable or a type.");
+      throw internalCompilerError(
+          "Unexpected type for QualifiedName binding: %s ", binding.getClass().getName());
     }
 
     private ReturnStatement convert(org.eclipse.jdt.core.dom.ReturnStatement statement) {
@@ -1613,33 +1390,6 @@ public class CompilationUnitBuilder {
           .build();
     }
 
-    /**
-     * Finds and returns the descriptor of the type that encloses the variable referenced by the
-     * provided binding.
-     */
-    private TypeDeclaration findEnclosingTypeDeclaration(IVariableBinding variableBinding) {
-      // The binding is for a local variable in a static or instance block. JDT does not allow for
-      // retrieving the enclosing class. Answer the question from information we've been gathering
-      // while processing the compilation unit.
-      Type type = enclosingTypeByVariable.get(variableByJdtBinding.get(variableBinding));
-      if (type != null) {
-        return type.getDeclaration();
-      }
-      // The binding is a simple field and JDT provides direct knowledge of the declaring class.
-      if (variableBinding.getDeclaringClass() != null) {
-        return JdtUtils.createDeclarationForType(variableBinding.getDeclaringClass());
-      }
-      // The binding is a local variable or parameter in method. JDT provides an indirect path to
-      // the enclosing class.
-      if (variableBinding.getDeclaringMethod() != null) {
-        return JdtUtils.createDeclarationForType(
-            variableBinding.getDeclaringMethod().getDeclaringClass());
-      }
-
-      throw new RuntimeException(
-          "Need to be able to locate the declaring class for variable binding: " + variableBinding);
-    }
-
     private Expression convert(org.eclipse.jdt.core.dom.SimpleName expression) {
       IBinding binding = expression.resolveBinding();
       if (binding instanceof IVariableBinding) {
@@ -1648,7 +1398,7 @@ public class CompilationUnitBuilder {
           // It refers to a field.
           FieldDescriptor fieldDescriptor = JdtUtils.createFieldDescriptor(variableBinding);
           if (!fieldDescriptor.isStatic()
-              && !fieldDescriptor.isMemberOf(currentType.getTypeDescriptor())) {
+              && !fieldDescriptor.isMemberOf(getCurrentType().getTypeDescriptor())) {
             return FieldAccess.Builder.from(fieldDescriptor)
                 .setQualifier(
                     resolveImplicitOuterClassReference(
@@ -1660,135 +1410,16 @@ public class CompilationUnitBuilder {
         } else {
           // It refers to a local variable or parameter in a method or block.
           Variable variable = checkNotNull(variableByJdtBinding.get(variableBinding));
-          // The innermost type in which this variable is declared.
-          TypeDeclaration enclosingTypeDeclaration = findEnclosingTypeDeclaration(variableBinding);
-          TypeDeclaration currentTypeDeclaration = currentType.getDeclaration();
-          if (!enclosingTypeDeclaration.equals(currentTypeDeclaration)) {
-            return convertCapturedVariableReference(variable, enclosingTypeDeclaration);
-          } else {
-            return variable.getReference();
-          }
+          return resolveVariableReference(variable);
         }
       }
 
       if (binding instanceof ITypeBinding) {
         return null;
       }
-      // TODO(rluble): to be implemented
-      throw new RuntimeException(
-          "Need to implement translation for SimpleName binding: "
-              + expression.getClass().getName());
-    }
 
-    /**
-     * Returns the required nested path of field accesses needed to refer to a specific enclosing
-     * given by an explicit reference like {@code A.this} or {@code A.super}.
-     *
-     * <p>
-     *
-     * <pre><code>
-     *   class A extends Super {
-     *     void m() {}
-     *     class B {
-     *       class C {
-     *         { A a = A.this;}
-     *       }
-     *     }
-     *   }
-     * </code></pre>
-     *
-     * <p>In this example the outer class referred by {@code A.this} is 2 hops from the reference,
-     * hence the access returned would be {@code this.$outer_this.$outer_this}.
-     *
-     * <p>NOTE: Explicit outer references have to match the class exactly, i.e. references like
-     * {@code Super.this} instead of {@code A.this} will be rejected by the compiler.
-     */
-    private Expression resolveExplicitOuterClassReference(
-        DeclaredTypeDescriptor targetTypeDescriptor) {
-      return resolveOuterClassReference(targetTypeDescriptor, true);
-    }
-
-    /**
-     * Returns the required nested path of field accesses needed to refer to a specific enclosing
-     * given by an implicit reference like an unqualified method call {@code m()} that might be a
-     * method of an enclosing class. E.g:
-     *
-     * <p>
-     *
-     * <pre><code>
-     *   class A {
-     *     void m() {}
-     *     class B {
-     *     }
-     *   }
-     *   class ASub extends A{
-     *     class BSub extends B{
-     *       { m(); }
-     *     }
-     *   }
-     * </code></pre>
-     *
-     * <p>In this example the outer class referred by the call to {@code A.m()} is {@code ASub} and
-     * not {@code A}, an the path return would be {@code this.$outer_this} since it is the immediate
-     * enclosing class of {@code BSub}.
-     */
-    private Expression resolveImplicitOuterClassReference(
-        DeclaredTypeDescriptor targetTypeDescriptor) {
-      return resolveOuterClassReference(targetTypeDescriptor, false);
-    }
-
-    /**
-     * Returns a nested path of field accesses {@code this.$outer_this.....$outer_this} required to
-     * address a specific outer class.
-     *
-     * <p>The search for the enclosing class might be strict or non-strict, depending whether a
-     * subclass of the enclosing class is acceptable as a qualifier. When the member's qualifier is
-     * implicit, superclasses of the enclosing class are acceptable.
-     */
-    private Expression resolveOuterClassReference(
-        DeclaredTypeDescriptor targetTypeDescriptor, boolean strict) {
-      Expression qualifier = new ThisReference(currentType.getTypeDescriptor());
-      DeclaredTypeDescriptor innerTypeDescriptor = currentType.getTypeDescriptor();
-      while (innerTypeDescriptor.getTypeDeclaration().isCapturingEnclosingInstance()) {
-        boolean found =
-            strict
-                ? innerTypeDescriptor.hasSameRawType(targetTypeDescriptor)
-                : innerTypeDescriptor.isSubtypeOf(targetTypeDescriptor);
-        if (found) {
-          break;
-        }
-
-        qualifier =
-            FieldAccess.Builder.from(
-                    AstUtils.getFieldDescriptorForEnclosingInstance(
-                        innerTypeDescriptor, innerTypeDescriptor.getEnclosingTypeDescriptor()))
-                .setQualifier(qualifier)
-                .build();
-        innerTypeDescriptor = innerTypeDescriptor.getEnclosingTypeDescriptor();
-      }
-      return qualifier;
-    }
-
-    private Expression convertCapturedVariableReference(
-        Variable variable, TypeDeclaration enclosingClassDeclarationDescriptor) {
-      // the variable is declared outside current type, i.e. a captured variable to current
-      // type, and also a captured variable to the outer class in the type stack that is
-      // inside {@code enclosingClassRef}.
-      for (int i = typeStack.size() - 1; i >= 0; i--) {
-        if (typeStack.get(i).getDeclaration().equals(enclosingClassDeclarationDescriptor)) {
-          break;
-        }
-        capturesByTypeName.put(
-            typeStack.get(i).getDeclaration().getQualifiedSourceName(), variable);
-      }
-      // for reference to a captured variable, if it is in a constructor, translate to
-      // reference to outer parameter, otherwise, translate to reference to corresponding
-      // field created for the captured variable.
-      DeclaredTypeDescriptor currentTypeDescriptor = currentType.getTypeDescriptor();
-      FieldDescriptor fieldDescriptor =
-          AstUtils.getFieldDescriptorForCapture(currentTypeDescriptor, variable);
-      ThisReference qualifier = new ThisReference(currentTypeDescriptor);
-      return FieldAccess.Builder.from(fieldDescriptor).setQualifier(qualifier).build();
+      throw internalCompilerError(
+          "Unexpected binding class for SimpleName: %s", expression.getClass().getName());
     }
 
     private Variable convert(
@@ -1810,7 +1441,7 @@ public class CompilationUnitBuilder {
               getSourcePosition(variableBinding.getName(), variableDeclaration.getName()),
               variableBinding);
       variableByJdtBinding.put(variableBinding, variable);
-      recordEnclosingType(variable, currentType);
+      recordEnclosingType(variable, getCurrentType());
       return variable;
     }
 
@@ -1877,7 +1508,7 @@ public class CompilationUnitBuilder {
     private Expression convert(org.eclipse.jdt.core.dom.ThisExpression expression) {
       if (expression.getQualifier() == null) {
         // Unqualified this reference.
-        return new ThisReference(currentType.getTypeDescriptor());
+        return new ThisReference(getCurrentType().getTypeDescriptor());
       }
       return resolveExplicitOuterClassReference(
           JdtUtils.createDeclaredTypeDescriptor(expression.getQualifier().resolveTypeBinding()));
@@ -1903,31 +1534,13 @@ public class CompilationUnitBuilder {
       return TryStatement.newBuilder()
           .setSourcePosition(getSourcePosition(statement))
           .setResourceDeclarations(
-              resources
-                  .stream()
+              resources.stream()
                   .map(this::convert)
-                  .map(this::toResource)
+                  .map(CompilationUnitBuilder::toResource)
                   .collect(toImmutableList()))
           .setBody(convert(statement.getBody()))
           .setCatchClauses(catchClauses.stream().map(this::convert).collect(toImmutableList()))
           .setFinallyBlock(convertOrNull(statement.getFinally()))
-          .build();
-    }
-
-    private VariableDeclarationExpression toResource(Expression expression) {
-      if (expression instanceof VariableDeclarationExpression) {
-        return (VariableDeclarationExpression) expression;
-      }
-
-      // Create temporary variables for resources declared outside of the try statement.
-      return VariableDeclarationExpression.newBuilder()
-          .addVariableDeclaration(
-              Variable.newBuilder()
-                  .setName("$resource")
-                  .setTypeDescriptor(expression.getTypeDescriptor())
-                  .setFinal(true)
-                  .build(),
-              expression)
           .build();
     }
 
@@ -1958,16 +1571,6 @@ public class CompilationUnitBuilder {
         return convert((org.eclipse.jdt.core.dom.VariableDeclarationFragment) variableDeclaration)
             .getVariable();
       }
-    }
-
-    /**
-     * Records associations of variables and their enclosing type.
-     *
-     * <p>Enclosing type is a broader category than declaring type since some variables (fields)
-     * have a declaring type (that is also their enclosing type) while other variables do not.
-     */
-    private void recordEnclosingType(Variable variable, Type enclosingType) {
-      enclosingTypeByVariable.put(variable, enclosingType);
     }
 
     private ExpressionStatement convert(

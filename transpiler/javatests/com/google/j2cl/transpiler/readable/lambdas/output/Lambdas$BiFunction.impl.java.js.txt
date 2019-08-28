@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.lambdas.Lambdas$BiFunction.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.lambdas.Lambdas.BiFunction$impl');
 
 
@@ -52,7 +44,7 @@ class BiFunction {
 
   /**
    * @template V, T, U, R
-   * @param {BiFunction<T, U, R>} $thisArg
+   * @param {!BiFunction<T, U, R>} $thisArg
    * @param {Lambdas_Function<?, ?>} after
    * @return {BiFunction<T, U, V>}
    * @public
@@ -122,8 +114,7 @@ class BiFunction {
 
 $Util.$setClassMetadataForInterface(
     BiFunction,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.lambdas.Lambdas$BiFunction'));
+    'com.google.j2cl.transpiler.readable.lambdas.Lambdas$BiFunction');
 
 
 BiFunction.$markImplementor(/** @type {Function} */ (BiFunction));

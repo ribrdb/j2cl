@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.jsfunction.Main$JsFunctionOptionalImpl.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.jsfunction.Main.JsFunctionOptionalImpl$impl');
 
 
@@ -112,8 +104,7 @@ class JsFunctionOptionalImpl extends j_l_Object {
 
 $Util.$setClassMetadata(
     JsFunctionOptionalImpl,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.jsfunction.Main$JsFunctionOptionalImpl'));
+    'com.google.j2cl.transpiler.readable.jsfunction.Main$JsFunctionOptionalImpl');
 
 
 $JavaScriptFunction.$markImplementor(JsFunctionOptionalImpl);

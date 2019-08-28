@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.jstypeenum.Color.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.jstypeenum.Color$impl');
 
 
@@ -57,7 +49,7 @@ class Color extends Enum {
   }
 
   /**
-   * @param {string=} name
+   * @param {string} name
    * @return {!Color}
    * @public
    */
@@ -248,9 +240,7 @@ class Color extends Enum {
 };
 
 $Util.$setClassMetadataForEnum(
-    Color,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.jstypeenum.Color'));
+    Color, 'com.google.j2cl.transpiler.readable.jstypeenum.Color');
 
 
 /** @private {!Color} */

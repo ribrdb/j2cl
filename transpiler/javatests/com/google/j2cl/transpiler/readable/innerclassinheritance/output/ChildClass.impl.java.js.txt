@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.innerclassinheritance.ChildClass.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.innerclassinheritance.ChildClass$impl');
 
 
@@ -102,8 +94,7 @@ class ChildClass extends ParentOuter {
 
 $Util.$setClassMetadata(
     ChildClass,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.innerclassinheritance.ChildClass'));
+    'com.google.j2cl.transpiler.readable.innerclassinheritance.ChildClass');
 
 
 

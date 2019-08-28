@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.bridgemethoddefault.JJ.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.bridgemethoddefault.JJ$impl');
 
 
@@ -27,7 +19,7 @@ class JJ {
   m(o) {}
 
   /**
-   * @param {JJ} $thisArg
+   * @param {!JJ} $thisArg
    * @param {*} o
    * @return {void}
    * @public
@@ -89,9 +81,7 @@ class JJ {
 };
 
 $Util.$setClassMetadataForInterface(
-    JJ,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.bridgemethoddefault.JJ'));
+    JJ, 'com.google.j2cl.transpiler.readable.bridgemethoddefault.JJ');
 
 
 JJ.$markImplementor(/** @type {Function} */ (JJ));

@@ -21,8 +21,8 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 import com.google.auto.common.MoreTypes;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.lang.model.element.AnnotationMirror;
@@ -37,11 +37,27 @@ import javax.lang.model.type.TypeMirror;
  * Helper methods for APT processing.
  */
 public class MoreApt {
-  /** Returns the list of the type and its super types from most to least specific order. */
+
+  /** Returns the list of the type and its super types without a specific order. */
+  public static ImmutableSet<TypeElement> getTypeHierarchy(TypeElement typeElement) {
+    return ImmutableSet.copyOf(getHierarchyImpl(typeElement, true));
+  }
+
+  /** Returns the list of the class and its super classes from most to least specific order. */
   public static ImmutableList<TypeElement> getClassHierarchy(TypeElement typeElement) {
+    return getHierarchyImpl(typeElement, false);
+  }
+
+  public static ImmutableList<TypeElement> getHierarchyImpl(
+      TypeElement typeElement, boolean includeInterfaces) {
     ImmutableList.Builder<TypeElement> classHierarchyBuilder = new ImmutableList.Builder<>();
     for (TypeElement t = typeElement; t != null; t = asTypeElement(t.getSuperclass())) {
       classHierarchyBuilder.add(t);
+      if (includeInterfaces) {
+        for (TypeMirror i : t.getInterfaces()) {
+          classHierarchyBuilder.addAll(getHierarchyImpl(asTypeElement(i), includeInterfaces));
+        }
+      }
     }
     return classHierarchyBuilder.build();
   }
@@ -53,17 +69,18 @@ public class MoreApt {
   /**
    * Returns a list of fully qualified name of a class found in an annotation.
    *
-   * <p>Reading values for type Class in annotation processors causes issues, see
-   * {@link Element#getAnnotation(Class)}. To work around these issues we treat the annotation value
-   * as a String.
+   * <p>Reading values for type Class in annotation processors causes issues, see {@link
+   * Element#getAnnotation(Class)}. To work around these issues we treat the annotation value as a
+   * String.
+   *
    * <p>Note: If this method is invoked with an annotation and method that does not contain a
    * Collection / Array of class files it will throw an {@link IllegalArgumentException}.
    */
-  public static List<String> getClassNamesFromAnnotation(
+  public static ImmutableList<String> getClassNamesFromAnnotation(
       Element element, final Class<? extends Annotation> annotationClass, String field) {
     Optional<AnnotationValue> annotationValue = getAnnotationValue(element, annotationClass, field);
     if (!annotationValue.isPresent()) {
-      return new ArrayList<>();
+      return ImmutableList.<String>of();
     }
     Object value = annotationValue.get().getValue();
     checkArgument(value instanceof List, "The annotation value does not represent a list");

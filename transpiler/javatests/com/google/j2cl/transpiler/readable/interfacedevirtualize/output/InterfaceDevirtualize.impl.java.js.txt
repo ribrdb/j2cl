@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.interfacedevirtualize.InterfaceDevirtualize.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.interfacedevirtualize.InterfaceDevirtualize$impl');
 
 
@@ -173,8 +165,7 @@ class InterfaceDevirtualize extends j_l_Object {
 
 $Util.$setClassMetadata(
     InterfaceDevirtualize,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.interfacedevirtualize.InterfaceDevirtualize'));
+    'com.google.j2cl.transpiler.readable.interfacedevirtualize.InterfaceDevirtualize');
 
 
 

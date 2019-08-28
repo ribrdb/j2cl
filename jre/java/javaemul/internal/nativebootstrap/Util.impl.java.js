@@ -51,7 +51,7 @@ class Util {
    * @public
    */
   static $setClassMetadata(ctor, name) {
-    ctor.prototype.$$classMetadata = [name, Util.TYPE_CLASS];
+    ctor.prototype.$$classMetadata = [Util.$makeClassName(name), Util.TYPE_CLASS];
   }
 
   /**
@@ -61,7 +61,7 @@ class Util {
    * @public
    */
   static $setClassMetadataForInterface(ctor, name) {
-    ctor.prototype.$$classMetadata = [name, Util.TYPE_INTERFACE];
+    ctor.prototype.$$classMetadata = [Util.$makeClassName(name), Util.TYPE_INTERFACE];
   }
 
   /**
@@ -70,7 +70,7 @@ class Util {
    * @public
    */
   static $setClassMetadataForEnum(ctor, name) {
-    ctor.prototype.$$classMetadata = [name, Util.TYPE_ENUM];
+    ctor.prototype.$$classMetadata = [Util.$makeClassName(name), Util.TYPE_ENUM];
   }
 
   /**
@@ -80,7 +80,7 @@ class Util {
    * @public
    */
   static $setClassMetadataForPrimitive(ctor, name, shortName) {
-    ctor.prototype.$$classMetadata = [name, Util.TYPE_PRIMITIVE, shortName];
+    ctor.prototype.$$classMetadata = [Util.$makeClassName(name), Util.TYPE_PRIMITIVE, shortName];
     // Primitives also marked separately as $isPrimitiveType works even without
     // class metadata.
     ctor.prototype.$$isPrimitive = true;
@@ -202,7 +202,7 @@ class Util {
       return;
     }
 
-    const clinit = instance.constructor.$clinit;
+    const clinit = instance.constructor['$clinit'];
     if (clinit && clinit.name == '$clinit' /* i.e. not re-written yet */) {
       throw new Error(Util.getInitializationError_(instance.constructor));
     }

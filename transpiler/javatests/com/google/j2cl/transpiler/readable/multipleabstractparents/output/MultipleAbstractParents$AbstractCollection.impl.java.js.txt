@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.multipleabstractparents.MultipleAbstractParents$AbstractCollection.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.multipleabstractparents.MultipleAbstractParents.AbstractCollection$impl');
 
 
@@ -78,8 +70,7 @@ class AbstractCollection extends j_l_Object {
 
 $Util.$setClassMetadata(
     AbstractCollection,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.multipleabstractparents.MultipleAbstractParents$AbstractCollection'));
+    'com.google.j2cl.transpiler.readable.multipleabstractparents.MultipleAbstractParents$AbstractCollection');
 
 
 

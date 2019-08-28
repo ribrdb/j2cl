@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.importglobaljstypes.Number.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.importglobaljstypes.Number$impl');
 
 
@@ -122,8 +114,7 @@ class c_g_j2cl_transpiler_readable_importglobaljstypes_Number extends
 
 $Util.$setClassMetadata(
     c_g_j2cl_transpiler_readable_importglobaljstypes_Number,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.importglobaljstypes.Number'));
+    'com.google.j2cl.transpiler.readable.importglobaljstypes.Number');
 
 
 

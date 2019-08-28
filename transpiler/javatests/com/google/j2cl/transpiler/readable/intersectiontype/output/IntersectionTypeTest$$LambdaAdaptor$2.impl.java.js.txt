@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.intersectiontype.IntersectionTypeTest$$LambdaAdaptor$2.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.intersectiontype.IntersectionTypeTest.$LambdaAdaptor$2$impl');
 
 
@@ -95,8 +87,7 @@ class $LambdaAdaptor$2 extends j_l_Object {
 
 $Util.$setClassMetadata(
     $LambdaAdaptor$2,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.intersectiontype.IntersectionTypeTest$$LambdaAdaptor$2'));
+    'com.google.j2cl.transpiler.readable.intersectiontype.IntersectionTypeTest$$LambdaAdaptor$2');
 
 
 Cmp2.$markImplementor($LambdaAdaptor$2);

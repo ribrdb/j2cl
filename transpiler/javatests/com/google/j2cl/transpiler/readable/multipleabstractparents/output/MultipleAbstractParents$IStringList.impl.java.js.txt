@@ -1,11 +1,3 @@
-/**
- * @fileoverview transpiled from
- * com.google.j2cl.transpiler.readable.multipleabstractparents.MultipleAbstractParents$IStringList.
- *
- * @suppress {const, extraRequire, missingOverride, missingRequire,
- * suspiciousCode, transitionalSuspiciousCodeWarnings, unusedLocalVariables,
- * uselessCode, strictModuleDepCheck}
- */
 goog.module('com.google.j2cl.transpiler.readable.multipleabstractparents.MultipleAbstractParents.IStringList$impl');
 
 
@@ -94,8 +86,7 @@ class IStringList {
 
 $Util.$setClassMetadataForInterface(
     IStringList,
-    $Util.$makeClassName(
-        'com.google.j2cl.transpiler.readable.multipleabstractparents.MultipleAbstractParents$IStringList'));
+    'com.google.j2cl.transpiler.readable.multipleabstractparents.MultipleAbstractParents$IStringList');
 
 
 IStringList.$markImplementor(/** @type {Function} */ (IStringList));
